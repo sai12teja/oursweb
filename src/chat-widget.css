@@ -134,3 +134,94 @@
   background: linear-gradient(135deg, #7b5cff 0%, #4b2fd6 100%);
 }
 .agentra-chat .ac-input button:disabled { opacity: 0.45; cursor: default; }
+
+/* Header book button */
+.agentra-chat .ac-book {
+  margin-left: auto;
+  background: rgba(255, 255, 255, 0.14);
+  border: none;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 11px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.agentra-chat .ac-book:hover { background: rgba(255, 255, 255, 0.24); }
+.agentra-chat .ac-header .ac-close { margin-left: 8px; }
+
+/* Quick replies */
+.agentra-chat .ac-quick {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+.agentra-chat .ac-quick button {
+  background: #262235;
+  border: 1px solid rgba(123, 92, 255, 0.5);
+  color: #e7e4f1;
+  font-size: 13px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.agentra-chat .ac-quick button:hover { background: #312c45; }
+
+/* Booking form */
+.agentra-chat .ac-form {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #15131f;
+}
+.agentra-chat .ac-form__intro { color: #cfcadf; font-size: 13px; margin: 0; }
+.agentra-chat .ac-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #cfcadf;
+}
+.agentra-chat .ac-opt { font-weight: 400; color: #8a84a0; }
+.agentra-chat .ac-form input,
+.agentra-chat .ac-form textarea {
+  background: #262235;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  padding: 10px 12px;
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  outline: none;
+}
+.agentra-chat .ac-form input:focus,
+.agentra-chat .ac-form textarea:focus { border-color: #7b5cff; }
+.agentra-chat .ac-form input[aria-invalid="true"] { border-color: #ff6b6b; }
+.agentra-chat .ac-form textarea { resize: vertical; }
+.agentra-chat .ac-form__row { display: flex; gap: 10px; }
+.agentra-chat .ac-form__row label { flex: 1; }
+.agentra-chat .ac-form small { color: #ff8585; font-weight: 400; font-size: 11.5px; }
+.agentra-chat .ac-form__err { display: block; }
+.agentra-chat .ac-form__submit {
+  margin-top: 4px;
+  border: none;
+  border-radius: 10px;
+  padding: 12px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  background: linear-gradient(135deg, #7b5cff 0%, #4b2fd6 100%);
+}
+.agentra-chat .ac-form__submit:disabled { opacity: 0.5; cursor: default; }
+/* native date/time pickers on dark */
+.agentra-chat .ac-form input[type="date"]::-webkit-calendar-picker-indicator,
+.agentra-chat .ac-form input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; }

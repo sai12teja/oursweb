@@ -15,11 +15,11 @@ function getClientPromise() {
   return clientPromise;
 }
 
-async function collection() {
+async function collection(name = "conversations") {
   const cp = getClientPromise();
   if (!cp) return null;
   const client = await cp;
-  return client.db(process.env.MONGODB_DB || "agentra").collection("conversations");
+  return client.db(process.env.MONGODB_DB || "agentra").collection(name);
 }
 
 export async function saveConversation(conversationId, messages) {
@@ -49,5 +49,30 @@ export async function getConversation(conversationId) {
   } catch (e) {
     console.error("Mongo read failed:", e.message);
     return null;
+  }
+}
+
+// Appointments ------------------------------------------------------------
+export async function saveAppointment(appt) {
+  try {
+    const col = await collection("appointments");
+    if (!col) return { ok: false, reason: "no-storage" };
+    const doc = { ...appt, status: "requested", createdAt: new Date() };
+    const res = await col.insertOne(doc);
+    return { ok: true, id: String(res.insertedId) };
+  } catch (e) {
+    console.error("Mongo appointment save failed:", e.message);
+    return { ok: false, reason: "error", error: e.message };
+  }
+}
+
+export async function listAppointments(limit = 50) {
+  try {
+    const col = await collection("appointments");
+    if (!col) return [];
+    return await col.find({}).sort({ createdAt: -1 }).limit(limit).toArray();
+  } catch (e) {
+    console.error("Mongo appointment list failed:", e.message);
+    return [];
   }
 }

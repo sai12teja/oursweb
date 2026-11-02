@@ -3,8 +3,31 @@ import "./chat-widget.css";
 
 const GREETING = {
   role: "assistant",
-  content: "Hi! I'm Agentra's AI assistant. Ask me anything about our services.",
+  content:
+    "Hi! I'm Agentra's assistant. Ask me about our AI services, or book a quick call.",
 };
+
+const QUICK = [
+  { label: "Our services", text: "What services do you offer?" },
+  { label: "How you work", text: "How do you work with clients?" },
+  { label: "Book appointment", book: true },
+];
+
+const BLANK = { name: "", email: "", date: "", time: "", reason: "" };
+const BOOK_RE = /\b(book|appointment|appoint|schedule|meeting|demo|call|consult)/i;
+
+// minimal **bold** rendering; line breaks come from CSS white-space: pre-wrap
+function fmt(text) {
+  return String(text)
+    .split(/(\*\*[^*]+\*\*)/g)
+    .map((part, i) =>
+      /^\*\*[^*]+\*\*$/.test(part) ? (
+        <strong key={i}>{part.slice(2, -2)}</strong>
+      ) : (
+        <span key={i}>{part}</span>
+      )
+    );
+}
 
 function getConversationId() {
   try {
@@ -19,51 +42,111 @@ function getConversationId() {
   }
 }
 
+const todayStr = () => new Date().toISOString().slice(0, 10);
+
 export default function ChatWidget() {
   const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState([GREETING]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showForm, setShowForm] = useState(false);
+  const [booking, setBooking] = useState(BLANK);
+  const [bErr, setBErr] = useState({});
+  const [bStatus, setBStatus] = useState("idle");
   const bodyRef = useRef(null);
   const convId = useRef(getConversationId());
 
   useEffect(() => {
     if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
-  }, [messages, open, loading]);
+  }, [messages, open, loading, showForm]);
 
-  async function send(e) {
-    e?.preventDefault();
-    const text = input.trim();
-    if (!text || loading) return;
+  function openBooking(note) {
+    setMessages((m) => [
+      ...m,
+      { role: "assistant", content: note || "Sure — let's get you booked. Just fill in a few details below." },
+    ]);
+    setShowForm(true);
+  }
 
-    // History sent to the server (drop the canned greeting).
+  async function send(text) {
+    const msg = (text ?? input).trim();
+    if (!msg || loading) return;
+
+    if (BOOK_RE.test(msg)) {
+      setMessages((m) => [...m, { role: "user", content: msg }]);
+      setInput("");
+      openBooking();
+      return;
+    }
+
     const history = messages.filter((m) => m !== GREETING);
-    const next = [...messages, { role: "user", content: text }];
-    setMessages(next);
+    setMessages((m) => [...m, { role: "user", content: msg }]);
     setInput("");
     setLoading(true);
-
     try {
       const res = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           conversationId: convId.current,
-          messages: [...history, { role: "user", content: text }],
+          messages: [...history, { role: "user", content: msg }],
         }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Request failed");
       setMessages((m) => [...m, { role: "assistant", content: data.reply }]);
     } catch (err) {
-      setMessages((m) => [
-        ...m,
-        { role: "assistant", content: "Sorry, something went wrong: " + err.message },
-      ]);
+      setMessages((m) => [...m, { role: "assistant", content: "Sorry, something went wrong: " + err.message }]);
     } finally {
       setLoading(false);
     }
   }
+
+  async function submitBooking(e) {
+    e.preventDefault();
+    setBErr({});
+    setBStatus("sending");
+    try {
+      const res = await fetch("/api/appointment", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...booking, conversationId: convId.current }),
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        setShowForm(false);
+        setBStatus("idle");
+        setMessages((m) => [
+          ...m,
+          {
+            role: "assistant",
+            content: `✅ Booked! Your request for **${booking.date} at ${booking.time}** is saved. We'll confirm by email at ${booking.email}.`,
+          },
+        ]);
+        setBooking(BLANK);
+      } else if (data.errors) {
+        setBErr(data.errors);
+        setBStatus("idle");
+      } else {
+        setShowForm(false);
+        setBStatus("idle");
+        setMessages((m) => [
+          ...m,
+          {
+            role: "assistant",
+            content:
+              "I couldn't save that just now — booking storage isn't set up yet. Please email us and we'll lock it in.",
+          },
+        ]);
+      }
+    } catch (err) {
+      setBStatus("idle");
+      setBErr({ form: "Network error — please try again." });
+    }
+  }
+
+  const set = (k) => (e) => setBooking((b) => ({ ...b, [k]: e.target.value }));
+  const showQuick = !showForm && messages.length <= 1 && !loading;
 
   return (
     <div className="agentra-chat">
@@ -73,37 +156,95 @@ export default function ChatWidget() {
             <span className="ac-dot" />
             <div>
               <strong>Agentra Assistant</strong>
-              <small>Powered by NVIDIA AI</small>
+              <small>Services &amp; bookings</small>
             </div>
+            <button
+              className="ac-book"
+              onClick={() => (showForm ? setShowForm(false) : openBooking())}
+              aria-label="Book appointment"
+            >
+              {showForm ? "← Chat" : "📅 Book"}
+            </button>
             <button className="ac-close" aria-label="Close chat" onClick={() => setOpen(false)}>
               ×
             </button>
           </div>
 
-          <div className="ac-body" ref={bodyRef}>
-            {messages.map((m, i) => (
-              <div key={i} className={"ac-msg ac-" + m.role}>
-                {m.content}
+          {!showForm ? (
+            <>
+              <div className="ac-body" ref={bodyRef}>
+                {messages.map((m, i) => (
+                  <div key={i} className={"ac-msg ac-" + m.role}>
+                    {fmt(m.content)}
+                  </div>
+                ))}
+                {loading && (
+                  <div className="ac-msg ac-assistant ac-typing">
+                    <span></span><span></span><span></span>
+                  </div>
+                )}
+                {showQuick && (
+                  <div className="ac-quick">
+                    {QUICK.map((q) => (
+                      <button key={q.label} onClick={() => (q.book ? openBooking() : send(q.text))}>
+                        {q.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
-            ))}
-            {loading && (
-              <div className="ac-msg ac-assistant ac-typing">
-                <span></span><span></span><span></span>
-              </div>
-            )}
-          </div>
 
-          <form className="ac-input" onSubmit={send}>
-            <input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type a message…"
-              aria-label="Message"
-            />
-            <button type="submit" disabled={loading || !input.trim()} aria-label="Send">
-              ➤
-            </button>
-          </form>
+              <form
+                className="ac-input"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  send();
+                }}
+              >
+                <input
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  placeholder="Ask about our services…"
+                  aria-label="Message"
+                />
+                <button type="submit" disabled={loading || !input.trim()} aria-label="Send">➤</button>
+              </form>
+            </>
+          ) : (
+            <form className="ac-form" onSubmit={submitBooking}>
+              <p className="ac-form__intro">Book a quick call with our team.</p>
+              <label>
+                Name
+                <input value={booking.name} onChange={set("name")} aria-invalid={!!bErr.name} />
+                {bErr.name && <small>{bErr.name}</small>}
+              </label>
+              <label>
+                Email
+                <input type="email" value={booking.email} onChange={set("email")} aria-invalid={!!bErr.email} />
+                {bErr.email && <small>{bErr.email}</small>}
+              </label>
+              <div className="ac-form__row">
+                <label>
+                  Date
+                  <input type="date" min={todayStr()} value={booking.date} onChange={set("date")} aria-invalid={!!bErr.date} />
+                  {bErr.date && <small>{bErr.date}</small>}
+                </label>
+                <label>
+                  Time
+                  <input type="time" value={booking.time} onChange={set("time")} aria-invalid={!!bErr.time} />
+                  {bErr.time && <small>{bErr.time}</small>}
+                </label>
+              </div>
+              <label>
+                What's it about? <span className="ac-opt">(optional)</span>
+                <textarea rows="2" value={booking.reason} onChange={set("reason")} placeholder="e.g. automation for support" />
+              </label>
+              {bErr.form && <small className="ac-form__err">{bErr.form}</small>}
+              <button type="submit" className="ac-form__submit" disabled={bStatus === "sending"}>
+                {bStatus === "sending" ? "Booking…" : "Confirm appointment"}
+              </button>
+            </form>
+          )}
         </div>
       )}
 
