@@ -3,3 +3,7 @@ dist
 .DS_Store
 *.local
 .gstack/
+.env
+.env.*
+!.env.example
+.vercel
