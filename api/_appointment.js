@@ -1,5 +1,5 @@
 // Appointment booking: validate input, then persist to MongoDB.
-import { saveAppointment } from "./_db.js";
+import { saveAppointment } from "./_store.js";
 
 export function validateAppointment(b) {
   const errors = {};
