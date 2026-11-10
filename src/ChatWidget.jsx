@@ -4,7 +4,7 @@ import "./chat-widget.css";
 const GREETING = {
   role: "assistant",
   content:
-    "Hi! I'm Agentra's assistant. Ask me about our AI services, or book a quick call.",
+    "Hi! I'm SYNQENTRA's assistant. Ask me about our AI services, or book a quick call.",
 };
 
 const QUICK = [
@@ -151,11 +151,11 @@ export default function ChatWidget() {
   return (
     <div className="agentra-chat">
       {open && (
-        <div className="ac-panel" role="dialog" aria-label="Agentra chat">
+        <div className="ac-panel" role="dialog" aria-label="SYNQENTRA chat">
           <div className="ac-header">
             <span className="ac-dot" />
             <div>
-              <strong>Agentra Assistant</strong>
+              <strong>SYNQENTRA Assistant</strong>
               <small>Services &amp; bookings</small>
             </div>
             <button

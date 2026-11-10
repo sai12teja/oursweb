@@ -3,96 +3,96 @@ export const routes = [
   {
     "name": "index",
     "path": "/",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "404",
     "path": "/404",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "404-2",
     "path": "/404-2",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "about",
     "path": "/about",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "ai-startup",
     "path": "/ai-startup",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "ai-startup-dark",
     "path": "/ai-startup-dark",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "blog-details",
     "path": "/blog-details",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "blog-standard",
     "path": "/blog-standard",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "contact",
     "path": "/contact",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "faq",
     "path": "/faq",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "index-2",
     "path": "/index-2",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "index-dark",
     "path": "/index-dark",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "pricing",
     "path": "/pricing",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "project-1",
     "path": "/project-1",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "project-2",
     "path": "/project-2",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "project-details",
     "path": "/project-details",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "service",
     "path": "/service",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "service-details",
     "path": "/service-details",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   },
   {
     "name": "team",
     "path": "/team",
-    "title": "Agentra - Ai Agency HTML Template"
+    "title": "SYNQENTRA — Engineering the Extraordinary"
   }
 ];

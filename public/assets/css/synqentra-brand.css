@@ -1,0 +1,117 @@
+/* ============================================================
+   SYNQENTRA — Brand Enhancement Layer
+   Loaded AFTER the template's styles.css. It re-skins the base
+   template with the SYNQENTRA identity (palette, typography,
+   finishing touches) without changing markup or structure.
+   Everything here is additive / token overrides — non-destructive.
+   ============================================================ */
+
+/* 1) PALETTE ----------------------------------------------------
+   Remap the template's accent tokens to the SYNQENTRA cobalt system.
+   The base theme drives most accents through these CSS variables, so
+   overriding them re-colours the whole site in one place.            */
+:root {
+  --ai-startup-blue: #315EFB;                 /* Electric Cobalt       */
+  --ai-startup-gradient: linear-gradient(90deg, #8AB4FF 0%, #315EFB 52%, #172554 100%);
+  --ai-agency-orange: #315EFB;                /* retire the orange     */
+  --ai-startup-light-dark: #0B1220;           /* obsidian dark surface */
+
+  /* SYNQENTRA design tokens (used by the finishing touches below) */
+  --sq-obsidian: #080B14;
+  --sq-graphite: #111827;
+  --sq-cobalt:   #315EFB;
+  --sq-ice:      #8AB4FF;
+  --sq-peri:     #C7D2FE;
+  --sq-porcelain:#F5F7FC;
+  --sq-deep:     #172554;
+  --sq-steel:    #64748B;
+  --sq-glow: 0 10px 40px -12px rgba(49, 94, 251, .65), 0 0 0 1px rgba(49, 94, 251, .28);
+}
+
+/* 2) TYPOGRAPHY ------------------------------------------------
+   Manrope for display/headings, Inter for body. Icon fonts use their
+   own more-specific selectors, so inheritance here leaves them intact. */
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+h1, h2, h3, h4, h5, h6,
+.title, .sub-title, .display, .ff-2, [class*="heading"] {
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+  letter-spacing: -0.012em;
+}
+
+/* 3) FINISHING TOUCHES ----------------------------------------- */
+
+/* Text selection + smooth scroll */
+::selection { background: rgba(49, 94, 251, .85); color: #fff; }
+html { scroll-behavior: smooth; }
+
+/* Branded scrollbar */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: rgba(100, 116, 139, .10); }
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #315EFB, #172554);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover { background: #315EFB; }
+
+/* Buttons — subtle lift + cobalt glow */
+.tf-btn {
+  transition: box-shadow .35s ease, transform .35s ease, filter .35s ease;
+}
+.tf-btn:hover { transform: translateY(-2px); }
+.tf-btn.style-gradient:hover,
+.tf-btn.style-gradient-2:hover,
+.tf-btn.style-1:hover { box-shadow: var(--sq-glow); }
+
+/* Logo: consistent size + a soft shadow so the white wordmark stays
+   legible over light translucent nav pills as well as dark surfaces */
+.logo img, .logo-footer img {
+  height: 32px;
+  width: auto;
+  filter: drop-shadow(0 1px 2px rgba(8, 11, 20, .5));
+}
+@media (max-width: 575px) { .logo img { height: 28px; } }
+
+/* Accessible focus ring (keyboard users) */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--sq-cobalt);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Gentle hover elevation for the main content cards */
+.box-service, .service-box, .box-pricing, .box-team, .box-blog,
+.widget-box, .box-card, .project-item {
+  transition: transform .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s ease;
+}
+.box-service:hover, .service-box:hover, .box-pricing:hover,
+.box-team:hover, .box-blog:hover, .project-item:hover {
+  transform: translateY(-6px);
+}
+
+/* Pricing is by proposal — hide the monthly/yearly toggle */
+.section-pricing .pricing-switch { display: none !important; }
+
+/* "Why SYNQENTRA" value cards reuse the testimonial layout — hide the
+   star ratings so they don't read as unverifiable customer reviews */
+.section-testimonials .rating { display: none !important; }
+
+/* Hide the template's placeholder client-logo marquee (no real client
+   logos to show) so the site never implies clients it doesn't have */
+.brand-marque { display: none !important; }
+
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .tf-btn, .box-service, .service-box, .box-pricing,
+  .box-team, .box-blog, .project-item { transition: none !important; }
+}

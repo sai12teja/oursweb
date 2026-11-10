@@ -33,7 +33,7 @@ export default function App() {
         ))}
         <Route
           path="*"
-          element={<Page html={htmlByName["404"]} title="404 - Agentra" />}
+          element={<Page html={htmlByName["404"]} title="404 — SYNQENTRA" />}
         />
       </Routes>
       <ChatWidget />
