@@ -8,6 +8,7 @@ const INIT_SCRIPTS = [
   "/assets/js/gsapAnimation.js",// text / image parallax reveals
   "/assets/js/main.js",         // header sticky, counters, accordions, go-top, …
   "/assets/js/synqentra-motion.js", // card reveals + scroll-linked depth (brand layer)
+  "/assets/js/synqentra-nav.js",    // navbar: sliding indicator, condense, mobile sheet
 ];
 
 function loadScript(src) {

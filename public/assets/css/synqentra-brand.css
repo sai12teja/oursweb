@@ -169,23 +169,204 @@ p { text-wrap: pretty; }
 
 /* 5) COMPONENTS ------------------------------------------------- */
 
-/* Header — sticky state becomes a real glass bar over scrolling content */
-.header-fixed.header-sticky {
-  background-color: rgba(8, 11, 20, .78);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
-  backdrop-filter: blur(16px) saturate(140%);
-  box-shadow: 0 1px 0 var(--sq-line);
-}
-.header .menu-item .item-link { color: rgba(255, 255, 255, .8); }
-.header .menu-item .item-link:hover { color: #fff; }
-.menu-item .item-link::before { background-image: var(--sq-fill); }
-/* The header CTA is a full phrase now ("Request a Quote"): keep it on one
-   line, stop the logo shrinking, and take the room from link padding */
+/* NAVBAR — one floating glass pill on every page, a cobalt indicator that
+   glides under the links, scroll-condense and a progress line. Driven by
+   assets/js/synqentra-nav.js. The template shipped two different headers
+   (home: one cobalt pill; inner pages: logo + grey link-pill + CTA as three
+   islands at a wider width); this unifies them. */
+.header-fixed { background: transparent !important; box-shadow: none !important; }
+.header-fixed > .container { max-width: 1180px; transition: max-width .35s var(--sq-ease-out); }
 .header .tf-btn .text-btn { white-space: nowrap; }
 .header .logo { flex: none; }
+
 @media (min-width: 1200px) {
-  .header.style-2 .menu-item .item-link { padding-left: 14px; padding-right: 14px; }
-  .header.style-2 > .container.w-975 { max-width: 1060px; }
+  .header.header-fixed .header-content {
+    margin-top: 16px;
+    padding: 9px 9px 9px 24px;
+    gap: 18px;
+    border-radius: 999px;
+    background: rgba(11, 18, 32, .5);
+    border: 1px solid var(--sq-line);
+    -webkit-backdrop-filter: blur(18px) saturate(150%);
+    backdrop-filter: blur(18px) saturate(150%);
+    box-shadow: 0 14px 34px -22px rgba(8, 11, 20, .95);
+    transition: background .35s ease, border-color .35s ease, box-shadow .35s ease,
+                margin-top .35s var(--sq-ease-out), padding .35s var(--sq-ease-out);
+  }
+  /* condensed once the page scrolls: tighter, darker, lifted, cobalt hairline */
+  .header.header-fixed.header-sticky .header-content {
+    margin-top: 8px;
+    padding-top: 6px;
+    padding-bottom: 6px;
+    background: rgba(8, 11, 20, .82);
+    border-color: var(--sq-line-strong);
+    box-shadow: 0 18px 44px -22px rgba(8, 11, 20, 1), 0 0 0 1px rgba(49, 94, 251, .16);
+  }
+  .header-fixed.header-sticky > .container { max-width: 1120px; }
+}
+
+/* Links: drop the template's grey nav fill and its per-link active pill — the
+   gliding indicator (.sq-nav-pill) is the only highlight now. */
+.box-navigation { background: transparent !important; }
+.box-nav-menu {
+  background: transparent !important;
+  border-color: transparent !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  position: relative;
+}
+.menu-item .item-link::before { display: none !important; }
+.menu-item .item-link { position: relative; z-index: 1; }
+.header .menu-item .item-link { color: rgba(232, 236, 246, .72); transition: color .2s ease; }
+.header .menu-item .item-link span { text-decoration: none !important; }
+.header .menu-item .item-link:hover,
+.header .menu-item .item-link.active span { color: #fff; }
+@media (min-width: 1200px) {
+  .header .menu-item .item-link { padding: 12px 16px; }
+}
+
+.sq-nav-pill {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 0;
+  height: 40px;
+  transform: translate(0, -50%);
+  border-radius: 999px;
+  background: var(--sq-fill);
+  box-shadow: 0 8px 20px -8px rgba(49, 94, 251, .85), inset 0 1px 0 rgba(255, 255, 255, .22);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 0;
+  transition: transform .42s cubic-bezier(.34, 1.3, .5, 1),
+              width .42s cubic-bezier(.34, 1.3, .5, 1), opacity .3s ease;
+}
+
+/* Scroll-progress line across the very top of the viewport */
+.sq-scrollbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--sq-ice), var(--sq-cobalt));
+  z-index: 9998;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Mobile nav sheet — bigger rows, an active accent, a CTA and a contact line.
+   The offcanvas lives outside #wrapper, so it is themed here directly. */
+.offcanvas-mobile { background-color: var(--sq-obsidian); }
+.pop-up-nav-mobile {
+  padding: 18px 22px calc(26px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+.pop-up-nav-mobile .canvas-header {
+  padding-bottom: 18px;
+  margin-bottom: 6px;
+  border-bottom: 1px solid var(--sq-line);
+}
+.pop-up-nav-mobile .canvas-header .icon-close {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 15px;
+  transition: background .18s ease;
+}
+.pop-up-nav-mobile .canvas-header .icon-close:hover { background: rgba(255, 255, 255, .08); }
+.pop-up-nav-mobile .canvas-body { flex: 1; }
+.nav-ul-mb { display: flex; flex-direction: column; }
+.nav-ul-mb > li { border-bottom: 1px solid var(--sq-line); }
+.nav-ul-mb > li .mb-menu-link {
+  padding: 18px 2px 18px 18px !important;
+  font-family: 'Manrope', -apple-system, 'Segoe UI', sans-serif;
+  font-size: 20px !important;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  position: relative;
+}
+.nav-ul-mb > li .mb-menu-link span { color: var(--sq-text) !important; }
+.nav-ul-mb > li .mb-menu-link::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 3px;
+  height: 0;
+  border-radius: 3px;
+  transform: translateY(-50%);
+  background: var(--sq-fill);
+  transition: height .25s var(--sq-ease-out);
+}
+.nav-ul-mb > li .mb-menu-link.active::before { height: 24px; }
+.nav-ul-mb > li .mb-menu-link.active span { color: #fff !important; }
+.nav-ul-mb > li .mb-menu-link::after {
+  content: "";
+  width: 18px;
+  height: 18px;
+  flex: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%238AB4FF' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 4l7 5-7 5'/%3E%3C/svg%3E") no-repeat center / contain;
+  opacity: .45;
+  transition: opacity .2s ease, transform .2s ease;
+}
+.nav-ul-mb > li .mb-menu-link:hover::after,
+.nav-ul-mb > li .mb-menu-link.active::after { opacity: 1; transform: translateX(3px); }
+.offcanvas-mobile.show .nav-ul-mb > li {
+  opacity: 0;
+  transform: translateX(16px);
+  animation: sqMbIn .5s var(--sq-ease-out) forwards;
+}
+.offcanvas-mobile.show .nav-ul-mb > li:nth-child(1) { animation-delay: .05s; }
+.offcanvas-mobile.show .nav-ul-mb > li:nth-child(2) { animation-delay: .09s; }
+.offcanvas-mobile.show .nav-ul-mb > li:nth-child(3) { animation-delay: .13s; }
+.offcanvas-mobile.show .nav-ul-mb > li:nth-child(4) { animation-delay: .17s; }
+.offcanvas-mobile.show .nav-ul-mb > li:nth-child(5) { animation-delay: .21s; }
+.offcanvas-mobile.show .nav-ul-mb > li:nth-child(6) { animation-delay: .25s; }
+.offcanvas-mobile.show .nav-ul-mb > li:nth-child(7) { animation-delay: .29s; }
+.offcanvas-mobile.show .nav-ul-mb > li:nth-child(8) { animation-delay: .33s; }
+@keyframes sqMbIn { to { opacity: 1; transform: none; } }
+.pop-up-nav-mobile .canvas-bottom {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.sq-mb-cta { width: 100%; justify-content: center; min-height: 52px; }
+.sq-mb-contact {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 8px;
+  font-size: 13px;
+  color: var(--sq-text-muted);
+}
+.sq-mb-contact a { color: var(--sq-ice); margin-left: auto; }
+
+/* The chat launcher and go-to-top float at z 99999, above the offcanvas —
+   hide them while the mobile menu is open so nothing overlaps it */
+body:has(.offcanvas.show) .agentra-chat,
+body:has(.offcanvas.show) .progress-wrap { display: none !important; }
+.sq-mb-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+  background: #4ade80;
+  box-shadow: 0 0 0 3px rgba(74, 222, 128, .25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .header.header-fixed .header-content { transition: none; }
+  .sq-nav-pill { transition: opacity .2s ease; }
+  .offcanvas-mobile.show .nav-ul-mb > li { opacity: 1; transform: none; animation: none; }
 }
 
 /* 24×18 hamburger → 44px+ touch target without moving the bars */
