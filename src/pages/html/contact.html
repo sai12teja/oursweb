@@ -158,34 +158,31 @@
 
                                         <fieldset>
                                             <label for="name" class="text-body-2 letter-space--2 fw-5 title-input">Full Name</label>
-                                            <input type="text" name="name" id="name" placeholder="Your name here" required />
+                                            <input type="text" name="name" id="name" placeholder="Your name here" autocomplete="name" required />
                                         </fieldset>
 
                                         <fieldset>
-                                            <label for="name" class="text-body-2 letter-space--2 fw-5 title-input">Email Address</label>
-                                            <input type="email" name="email" id="email" placeholder="Enter your email" required />
+                                            <label for="email" class="text-body-2 letter-space--2 fw-5 title-input">Email Address</label>
+                                            <input type="email" name="email" id="email" placeholder="Enter your email" autocomplete="email" required />
                                         </fieldset>
 
                                         <div class="col g-20">
                                             <fieldset class="col-item">
-                                                <label for="phone" class="text-body-2 letter-space--2 fw-5 title-input">Phone Number</label>
-                                                <input type="number" name="phone" id="phone" placeholder="Phone" required />
+                                                <label for="phone" class="text-body-2 letter-space--2 fw-5 title-input">Phone Number (optional)</label>
+                                                <input type="tel" name="phone" id="phone" placeholder="Phone" autocomplete="tel" />
                                             </fieldset>
                                             <fieldset class="col-item">
-                                                <p class="text-body-2 letter-space--2 fw-5 title-input">Service</p>
-                                                <div class="nice-select">
-                                                    <span class="current caption-1">Service type</span>
-                                                    <ul class="list">
-                                                        <li class="option option-all">Service type</li>
-                                                        <li class="option">Web Solutions</li>
-                                                        <li class="option">Mobile Solutions</li>
-                                                        <li class="option">AI &amp; Automation</li>
-                                                        <li class="option">CRM Solutions</li>
-                                                        <li class="option">WhatsApp Solutions</li>
-                                                        <li class="option">Conversational AI</li>
-                                                        <li class="option">SEO &amp; Digital Growth</li>
-                                                    </ul>
-                                                </div>
+                                                <label for="service" class="text-body-2 letter-space--2 fw-5 title-input">Service</label>
+                                                <select name="service" id="service" class="sq-select">
+                                                    <option value="">Service type</option>
+                                                    <option>Web Solutions</option>
+                                                    <option>Mobile Solutions</option>
+                                                    <option>AI &amp; Automation</option>
+                                                    <option>CRM Solutions</option>
+                                                    <option>WhatsApp Solutions</option>
+                                                    <option>Conversational AI</option>
+                                                    <option>SEO &amp; Digital Growth</option>
+                                                </select>
                                             </fieldset>
                                         </div>
 
@@ -193,6 +190,8 @@
                                             <label for="mess" class="text-body-2 letter-space--2 fw-5 title-input">Message</label>
                                             <textarea name="mess" id="mess" placeholder="your message"></textarea>
                                         </fieldset>
+
+                                        <input type="text" name="website" class="sq-hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
                                         <button type="submit" class="tf-btn style-big style-gradient-2">
                                             <span class="text-btn">Send Message</span>
                                             <span class="icon-btn">
@@ -421,8 +420,8 @@
                                                 </p>
                                                 <form action="#" class="form-newsletter">
                                                     <fieldset>
-                                                        <input type="email" placeholder="Email Address" required />
-                                                        <button type="submit" class="send-btn">
+                                                        <input type="email" name="email" placeholder="Email Address" aria-label="Email address" autocomplete="email" required />
+                                                        <button type="submit" class="send-btn" aria-label="Subscribe">
                                                             <i class="icon-arrow-up-right"></i>
                                                         </button>
                                                     </fieldset>

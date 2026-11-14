@@ -12,6 +12,8 @@ function devApi(env) {
       (await import("./api/_appointment.js")).bookAppointment(body, {
         conversationId: body.conversationId,
       }),
+    "/api/enquiry": async (body) =>
+      (await import("./api/_enquiry.js")).submitEnquiry(body),
   };
   return {
     name: "dev-api",
