@@ -38,6 +38,27 @@ export async function saveAppointment(a) {
   }
 }
 
+// Contact-form messages and newsletter sign-ups (table: enquiries, migration 0002)
+export async function saveEnquiry(e) {
+  try {
+    const s = db();
+    if (!s) return { ok: false, reason: "no-storage" };
+    const { error } = await s.from("enquiries").insert({
+      kind: e.kind,
+      name: e.name || null,
+      email: e.email,
+      phone: e.phone || null,
+      service: e.service || null,
+      message: e.message || null,
+    });
+    if (error) throw error;
+    return { ok: true };
+  } catch (err) {
+    console.error("supabase enquiry:", err.message);
+    return { ok: false, reason: "error" };
+  }
+}
+
 export async function listAppointments(limit = 50) {
   try {
     const s = db();

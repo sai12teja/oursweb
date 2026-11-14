@@ -4,6 +4,7 @@ import { routes } from "./routes.js";
 import Page from "./Page.jsx";
 import ChatWidget from "./ChatWidget.jsx";
 import { installLinkInterceptor } from "./agentra-init.js";
+import { installFormHandler } from "./forms.js";
 
 // Load every converted fragment as a raw string at build time.
 const fragments = import.meta.glob("./pages/html/*.html", {
@@ -20,6 +21,7 @@ for (const p in fragments) {
 export default function App() {
   const navigate = useNavigate();
   useEffect(() => installLinkInterceptor(navigate), [navigate]);
+  useEffect(() => installFormHandler(), []);
 
   return (
     <>

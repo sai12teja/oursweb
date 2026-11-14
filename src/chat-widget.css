@@ -1,9 +1,31 @@
+/* SYNQENTRA chat widget. Colours come from the --sq-* tokens defined in
+   public/assets/css/synqentra-brand.css; the fallbacks keep it usable if
+   that file ever fails to load. */
 .agentra-chat {
+  --ac-fill: linear-gradient(135deg, var(--sq-cobalt, #315EFB) 0%, var(--sq-cobalt-press, #2548D6) 100%);
+  --ac-panel: var(--sq-obsidian, #080B14);
+  --ac-raised: var(--sq-surface-3, #182033);
+  --ac-line: var(--sq-line, rgba(199, 210, 254, .10));
+  --ac-line-strong: var(--sq-line-strong, rgba(199, 210, 254, .22));
+  --ac-text: var(--sq-text, #E8ECF6);
+  --ac-muted: var(--sq-text-muted, #94A3B8);
+  --ac-accent: var(--sq-ice, #8AB4FF);
+  --ac-error: #FF8A8A;
+
   position: fixed;
-  right: 24px;
-  bottom: 24px;
+  right: max(24px, env(safe-area-inset-right));
+  bottom: max(24px, env(safe-area-inset-bottom));
   z-index: 99999;
-  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+.agentra-chat button,
+.agentra-chat input,
+.agentra-chat textarea { font-family: inherit; }
+
+/* Keyboard focus: the widget resets outlines on its fields, so it draws its own */
+.agentra-chat :is(button, input, textarea):focus-visible {
+  outline: 2px solid var(--ac-accent);
+  outline-offset: 2px;
 }
 
 /* Launcher button */
@@ -13,58 +35,75 @@
   border-radius: 50%;
   border: none;
   cursor: pointer;
-  font-size: 24px;
+  font-size: 26px;
   line-height: 1;
   color: #fff;
-  background: linear-gradient(135deg, #7b5cff 0%, #4b2fd6 100%);
-  box-shadow: 0 10px 30px rgba(84, 46, 214, 0.45);
+  background: var(--ac-fill);
+  box-shadow: 0 12px 32px -8px rgba(49, 94, 251, .6), inset 0 1px 0 rgba(255, 255, 255, .24);
   display: flex;
   align-items: center;
   justify-content: center;
   margin-left: auto;
-  transition: transform 0.15s ease;
+  transition: transform .18s cubic-bezier(.16, 1, .3, 1), box-shadow .25s ease;
 }
-.agentra-chat .ac-launcher:hover { transform: scale(1.06); }
+.agentra-chat .ac-launcher:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 40px -10px rgba(49, 94, 251, .75), inset 0 1px 0 rgba(255, 255, 255, .24);
+}
+.agentra-chat .ac-launcher:active { transform: translateY(0) scale(.97); }
 
 /* Panel */
 .agentra-chat .ac-panel {
   width: min(370px, calc(100vw - 32px));
   height: min(520px, calc(100vh - 120px));
+  height: min(520px, calc(100dvh - 120px));
   margin-bottom: 14px;
-  background: #15131f;
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: var(--ac-panel);
+  border: 1px solid var(--ac-line-strong);
   border-radius: 16px;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 24px 64px -16px rgba(0, 0, 0, .6), 0 8px 24px -12px rgba(49, 94, 251, .35);
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  animation: ac-in 0.18s ease;
+  color: var(--ac-text);
+  transform-origin: bottom right;
+  animation: ac-in .28s cubic-bezier(.16, 1, .3, 1);
 }
 @keyframes ac-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(12px) scale(.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
 }
 
 .agentra-chat .ac-header {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 14px 16px;
-  background: linear-gradient(135deg, #7b5cff 0%, #4b2fd6 100%);
+  padding: 14px 12px 14px 16px;
+  background: var(--ac-fill);
   color: #fff;
 }
-.agentra-chat .ac-header strong { display: block; font-size: 14px; }
-.agentra-chat .ac-header small { opacity: 0.8; font-size: 11px; }
+.agentra-chat .ac-header strong {
+  display: block;
+  font-family: 'Manrope', 'Inter', system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+.agentra-chat .ac-header small { opacity: .85; font-size: 12px; }
 .agentra-chat .ac-dot {
   width: 9px; height: 9px; border-radius: 50%;
-  background: #4ade80; box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.25);
+  background: #4ade80; box-shadow: 0 0 0 3px rgba(74, 222, 128, .25);
+  flex: none;
 }
 .agentra-chat .ac-close {
-  margin-left: auto;
-  background: transparent; border: none; color: #fff;
-  font-size: 22px; line-height: 1; cursor: pointer; opacity: 0.85;
+  width: 36px; height: 36px;
+  margin-left: 4px;
+  display: flex; align-items: center; justify-content: center;
+  background: transparent; border: none; border-radius: 50%; color: #fff;
+  font-size: 14px; line-height: 1; cursor: pointer;
+  transition: background .18s ease;
 }
-.agentra-chat .ac-close:hover { opacity: 1; }
+.agentra-chat .ac-close:hover { background: rgba(255, 255, 255, .16); }
 
 .agentra-chat .ac-body {
   flex: 1;
@@ -73,83 +112,93 @@
   display: flex;
   flex-direction: column;
   gap: 10px;
-  background: #15131f;
+  background: var(--ac-panel);
 }
 .agentra-chat .ac-msg {
   max-width: 82%;
   padding: 10px 13px;
   border-radius: 14px;
   font-size: 14px;
-  line-height: 1.45;
+  line-height: 1.5;
   white-space: pre-wrap;
   word-wrap: break-word;
 }
 .agentra-chat .ac-user {
   align-self: flex-end;
-  background: linear-gradient(135deg, #7b5cff 0%, #4b2fd6 100%);
+  background: var(--ac-fill);
   color: #fff;
   border-bottom-right-radius: 4px;
 }
 .agentra-chat .ac-assistant {
   align-self: flex-start;
-  background: #262235;
-  color: #e7e4f1;
+  background: var(--ac-raised);
+  color: var(--ac-text);
   border-bottom-left-radius: 4px;
 }
 
 .agentra-chat .ac-typing { display: flex; gap: 4px; }
 .agentra-chat .ac-typing span {
   width: 7px; height: 7px; border-radius: 50%;
-  background: #8a84a0; animation: ac-blink 1.2s infinite ease-in-out;
+  background: var(--ac-muted); animation: ac-blink 1.2s infinite ease-in-out;
 }
-.agentra-chat .ac-typing span:nth-child(2) { animation-delay: 0.2s; }
-.agentra-chat .ac-typing span:nth-child(3) { animation-delay: 0.4s; }
-@keyframes ac-blink { 0%, 60%, 100% { opacity: 0.3; } 30% { opacity: 1; } }
+.agentra-chat .ac-typing span:nth-child(2) { animation-delay: .2s; }
+.agentra-chat .ac-typing span:nth-child(3) { animation-delay: .4s; }
+@keyframes ac-blink { 0%, 60%, 100% { opacity: .3; } 30% { opacity: 1; } }
 
 .agentra-chat .ac-input {
   display: flex;
   gap: 8px;
   padding: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.08);
-  background: #15131f;
+  border-top: 1px solid var(--ac-line);
+  background: var(--ac-panel);
 }
 .agentra-chat .ac-input input {
   flex: 1;
-  background: #262235;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  min-width: 0;
+  background: var(--ac-raised);
+  border: 1px solid var(--ac-line);
   border-radius: 10px;
   padding: 10px 12px;
   color: #fff;
   font-size: 14px;
   outline: none;
+  transition: border-color .18s ease;
 }
-.agentra-chat .ac-input input::placeholder { color: #8a84a0; }
+.agentra-chat .ac-input input:focus { border-color: var(--ac-accent); }
+.agentra-chat .ac-input input::placeholder { color: var(--ac-muted); }
 .agentra-chat .ac-input button {
-  width: 42px;
+  width: 44px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   border-radius: 10px;
   cursor: pointer;
   color: #fff;
-  font-size: 15px;
-  background: linear-gradient(135deg, #7b5cff 0%, #4b2fd6 100%);
+  font-size: 16px;
+  background: var(--ac-fill);
+  transition: filter .18s ease, opacity .18s ease;
 }
-.agentra-chat .ac-input button:disabled { opacity: 0.45; cursor: default; }
+.agentra-chat .ac-input button:hover:not(:disabled) { filter: brightness(1.12); }
+.agentra-chat .ac-input button:disabled { opacity: .45; cursor: default; }
 
 /* Header book button */
 .agentra-chat .ac-book {
   margin-left: auto;
-  background: rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, .16);
   border: none;
   color: #fff;
   font-size: 12px;
   font-weight: 600;
-  padding: 7px 11px;
+  min-height: 32px;
+  padding: 7px 12px;
   border-radius: 999px;
   cursor: pointer;
   white-space: nowrap;
+  transition: background .18s ease;
 }
-.agentra-chat .ac-book:hover { background: rgba(255, 255, 255, 0.24); }
-.agentra-chat .ac-header .ac-close { margin-left: 8px; }
+.agentra-chat .ac-book:hover { background: rgba(255, 255, 255, .28); }
 
 /* Quick replies */
 .agentra-chat .ac-quick {
@@ -159,16 +208,20 @@
   margin-top: 4px;
 }
 .agentra-chat .ac-quick button {
-  background: #262235;
-  border: 1px solid rgba(123, 92, 255, 0.5);
-  color: #e7e4f1;
+  background: transparent;
+  border: 1px solid rgba(138, 180, 255, .45);
+  color: var(--ac-text);
   font-size: 13px;
-  padding: 8px 12px;
+  min-height: 36px;
+  padding: 8px 14px;
   border-radius: 999px;
   cursor: pointer;
-  transition: background 0.2s ease;
+  transition: background .18s ease, border-color .18s ease;
 }
-.agentra-chat .ac-quick button:hover { background: #312c45; }
+.agentra-chat .ac-quick button:hover {
+  background: rgba(49, 94, 251, .22);
+  border-color: var(--ac-accent);
+}
 
 /* Booking form */
 .agentra-chat .ac-form {
@@ -178,22 +231,22 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: #15131f;
+  background: var(--ac-panel);
 }
-.agentra-chat .ac-form__intro { color: #cfcadf; font-size: 13px; margin: 0; }
+.agentra-chat .ac-form__intro { color: var(--ac-text); font-size: 13px; margin: 0; }
 .agentra-chat .ac-form label {
   display: flex;
   flex-direction: column;
   gap: 5px;
   font-size: 12.5px;
   font-weight: 600;
-  color: #cfcadf;
+  color: var(--ac-text);
 }
-.agentra-chat .ac-opt { font-weight: 400; color: #8a84a0; }
+.agentra-chat .ac-opt { font-weight: 400; color: var(--ac-muted); }
 .agentra-chat .ac-form input,
 .agentra-chat .ac-form textarea {
-  background: #262235;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: var(--ac-raised);
+  border: 1px solid var(--ac-line-strong);
   border-radius: 10px;
   padding: 10px 12px;
   color: #fff;
@@ -201,27 +254,100 @@
   font-size: 14px;
   font-weight: 400;
   outline: none;
+  transition: border-color .18s ease;
 }
+.agentra-chat .ac-form textarea::placeholder { color: var(--ac-muted); }
 .agentra-chat .ac-form input:focus,
-.agentra-chat .ac-form textarea:focus { border-color: #7b5cff; }
-.agentra-chat .ac-form input[aria-invalid="true"] { border-color: #ff6b6b; }
+.agentra-chat .ac-form textarea:focus { border-color: var(--ac-accent); }
+.agentra-chat .ac-form input[aria-invalid="true"] { border-color: var(--ac-error); }
 .agentra-chat .ac-form textarea { resize: vertical; }
 .agentra-chat .ac-form__row { display: flex; gap: 10px; }
-.agentra-chat .ac-form__row label { flex: 1; }
-.agentra-chat .ac-form small { color: #ff8585; font-weight: 400; font-size: 11.5px; }
+.agentra-chat .ac-form__row label { flex: 1; min-width: 0; }
+.agentra-chat .ac-form small { color: var(--ac-error); font-weight: 400; font-size: 12px; }
 .agentra-chat .ac-form__err { display: block; }
 .agentra-chat .ac-form__submit {
   margin-top: 4px;
   border: none;
   border-radius: 10px;
+  min-height: 44px;
   padding: 12px;
   color: #fff;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
-  background: linear-gradient(135deg, #7b5cff 0%, #4b2fd6 100%);
+  background: var(--ac-fill);
+  transition: filter .18s ease, opacity .18s ease;
 }
-.agentra-chat .ac-form__submit:disabled { opacity: 0.5; cursor: default; }
+.agentra-chat .ac-form__submit:hover:not(:disabled) { filter: brightness(1.12); }
+.agentra-chat .ac-form__submit:disabled { opacity: .5; cursor: default; }
 /* native date/time pickers on dark */
 .agentra-chat .ac-form input[type="date"]::-webkit-calendar-picker-indicator,
-.agentra-chat .ac-form input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: 0.6; }
+.agentra-chat .ac-form input[type="time"]::-webkit-calendar-picker-indicator { filter: invert(1); opacity: .6; }
+
+/* One-time nudge beside the launcher */
+.agentra-chat .ac-teaser {
+  position: absolute;
+  right: 70px;
+  bottom: 7px;
+  display: flex;
+  align-items: flex-start;
+  width: max-content;
+  max-width: min(250px, calc(100vw - 110px));
+  background: var(--ac-panel);
+  border: 1px solid var(--ac-line-strong);
+  border-radius: 14px 14px 4px 14px;
+  box-shadow: 0 16px 40px -16px rgba(0, 0, 0, .6), 0 6px 18px -10px rgba(49, 94, 251, .5);
+  animation: ac-in .32s cubic-bezier(.16, 1, .3, 1);
+}
+.agentra-chat .ac-teaser__open {
+  flex: 1;
+  padding: 11px 4px 11px 14px;
+  background: none;
+  border: none;
+  color: var(--ac-text);
+  font-size: 13px;
+  line-height: 1.45;
+  text-align: left;
+  cursor: pointer;
+}
+.agentra-chat .ac-teaser__close {
+  flex: none;
+  width: 32px;
+  height: 32px;
+  margin: 3px 3px 0 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-radius: 50%;
+  color: var(--ac-muted);
+  font-size: 10px;
+  cursor: pointer;
+  transition: background .18s ease, color .18s ease;
+}
+.agentra-chat .ac-teaser__close:hover { background: rgba(255, 255, 255, .1); color: #fff; }
+
+/* Phones: the panel becomes a full-width sheet, and fields go to 16px so
+   iOS does not zoom the page when one is focused */
+@media (max-width: 480px) {
+  .agentra-chat {
+    right: max(16px, env(safe-area-inset-right));
+    bottom: max(16px, env(safe-area-inset-bottom));
+  }
+  .agentra-chat .ac-panel {
+    width: calc(100vw - 32px);
+    height: min(560px, calc(100vh - 104px));
+    height: min(560px, calc(100dvh - 104px));
+  }
+  .agentra-chat .ac-input input,
+  .agentra-chat .ac-form input,
+  .agentra-chat .ac-form textarea { font-size: 16px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .agentra-chat .ac-panel, .agentra-chat .ac-teaser { animation: none; }
+  .agentra-chat .ac-typing span { animation: none; opacity: .7; }
+  .agentra-chat .ac-launcher,
+  .agentra-chat .ac-launcher:hover { transition: none; transform: none; }
+}
