@@ -78,10 +78,14 @@ fallback + `/api` routing is handled by `vercel.json`.
 
 ## Routes
 
-`/` (home), `/index-2`, `/index-dark`, `/ai-startup`, `/ai-startup-dark`,
-`/about`, `/service`, `/service-details`, `/project-1`, `/project-2`,
-`/project-details`, `/team`, `/pricing`, `/blog-standard`, `/blog-details`,
-`/contact`, `/faq`, `/404`, `/404-2`. Unknown paths render the 404 page.
+`/` (home), `/about`, `/service`, `/pricing`, `/team`, `/faq`, `/contact`,
+`/404`. Unknown paths render the 404 page.
+
+Five template pages (projects, project details, blog list, blog article,
+service details) are parked in `src/pages/_offline/`. They still contain
+invented template content (clients, quotes, comments), so they are not routed
+or bundled. To bring one back, replace its content, move it into
+`src/pages/html/` and add its entry to `src/routes.js`.
 
 ## Re-generating pages
 

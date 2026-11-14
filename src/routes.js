@@ -8,91 +8,36 @@ export const routes = [
   {
     "name": "404",
     "path": "/404",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
-  },
-  {
-    "name": "404-2",
-    "path": "/404-2",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
+    "title": "Page not found — SYNQENTRA"
   },
   {
     "name": "about",
     "path": "/about",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
-  },
-  {
-    "name": "ai-startup",
-    "path": "/ai-startup",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
-  },
-  {
-    "name": "ai-startup-dark",
-    "path": "/ai-startup-dark",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
-  },
-  {
-    "name": "blog-details",
-    "path": "/blog-details",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
-  },
-  {
-    "name": "blog-standard",
-    "path": "/blog-standard",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
+    "title": "About — SYNQENTRA"
   },
   {
     "name": "contact",
     "path": "/contact",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
+    "title": "Contact — SYNQENTRA"
   },
   {
     "name": "faq",
     "path": "/faq",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
-  },
-  {
-    "name": "index-2",
-    "path": "/index-2",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
-  },
-  {
-    "name": "index-dark",
-    "path": "/index-dark",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
+    "title": "FAQ — SYNQENTRA"
   },
   {
     "name": "pricing",
     "path": "/pricing",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
-  },
-  {
-    "name": "project-1",
-    "path": "/project-1",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
-  },
-  {
-    "name": "project-2",
-    "path": "/project-2",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
-  },
-  {
-    "name": "project-details",
-    "path": "/project-details",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
+    "title": "Pricing — SYNQENTRA"
   },
   {
     "name": "service",
     "path": "/service",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
-  },
-  {
-    "name": "service-details",
-    "path": "/service-details",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
+    "title": "Services — SYNQENTRA"
   },
   {
     "name": "team",
     "path": "/team",
-    "title": "SYNQENTRA — Engineering the Extraordinary"
+    "title": "Team — SYNQENTRA"
   }
 ];
