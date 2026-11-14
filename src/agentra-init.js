@@ -2,11 +2,12 @@
 // route change, and intercepts internal .html links so they route client-side.
 //
 // The vendor libraries (jQuery, gsap, Swiper, WOW, …) load once in index.html.
-// Only these three init files are content-dependent and must re-run per page:
+// Only these init files are content-dependent and must re-run per page:
 const INIT_SCRIPTS = [
   "/assets/js/carousel.js",     // Swiper init (binds window "load")
   "/assets/js/gsapAnimation.js",// text / image parallax reveals
   "/assets/js/main.js",         // header sticky, counters, accordions, go-top, …
+  "/assets/js/synqentra-motion.js", // card reveals + scroll-linked depth (brand layer)
 ];
 
 function loadScript(src) {

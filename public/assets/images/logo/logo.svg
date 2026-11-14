@@ -7,5 +7,5 @@
   </defs>
   <polygon points="22,4 40,13 40,31 22,40 4,31 4,13" fill="none" stroke="url(#mkW)" stroke-width="3.2" stroke-linejoin="round"/>
   <text x="22" y="30" text-anchor="middle" font-family="Arial, 'Segoe UI', sans-serif" font-size="24" font-weight="800" fill="#FFFFFF">S</text>
-  <text x="54" y="30" font-family="Arial, 'Segoe UI', sans-serif" font-size="23" font-weight="800" letter-spacing="0.5" fill="#FFFFFF">SYNQENTRA</text>
+  <text x="54" y="30" font-family="Arial, 'Segoe UI', sans-serif" font-size="23" font-weight="800" textLength="150" lengthAdjust="spacingAndGlyphs" fill="#FFFFFF">SYNQENTRA</text>
 </svg>

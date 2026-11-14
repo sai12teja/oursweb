@@ -2,21 +2,25 @@
    SYNQENTRA — Brand Enhancement Layer
    Loaded AFTER the template's styles.css. It re-skins the base
    template with the SYNQENTRA identity (palette, typography,
-   finishing touches) without changing markup or structure.
+   spacing, component states, motion) without changing structure.
    Everything here is additive / token overrides — non-destructive.
+
+   1 Tokens · 2 Typography · 3 Spacing & layout · 4 Surfaces
+   5 Components · 6 Motion · 7 Finishing touches · 8 Reduced motion
    ============================================================ */
 
-/* 1) PALETTE ----------------------------------------------------
-   Remap the template's accent tokens to the SYNQENTRA cobalt system.
-   The base theme drives most accents through these CSS variables, so
-   overriding them re-colours the whole site in one place.            */
+/* 1) TOKENS ----------------------------------------------------- */
 :root {
-  --ai-startup-blue: #315EFB;                 /* Electric Cobalt       */
+  /* Template tokens remapped to the cobalt system */
+  --ai-startup-blue: #315EFB;
   --ai-startup-gradient: linear-gradient(90deg, #8AB4FF 0%, #315EFB 52%, #172554 100%);
-  --ai-agency-orange: #315EFB;                /* retire the orange     */
-  --ai-startup-light-dark: #0B1220;           /* obsidian dark surface */
+  --ai-agency-orange: #315EFB;
+  --ai-startup-light-dark: #0B1220;
+  --color-border-1: rgba(49, 94, 251, .14);   /* was template purple */
+  --color-bg-1: rgba(49, 94, 251, .08);       /* was template purple */
+  --color-paragraph: #566074;                 /* AA on white and porcelain */
 
-  /* SYNQENTRA design tokens (used by the finishing touches below) */
+  /* Brand palette */
   --sq-obsidian: #080B14;
   --sq-graphite: #111827;
   --sq-cobalt:   #315EFB;
@@ -25,48 +29,171 @@
   --sq-porcelain:#F5F7FC;
   --sq-deep:     #172554;
   --sq-steel:    #64748B;
+
+  /* Surface ladder (dark): page → section → card → raised */
+  --sq-surface-0: var(--sq-obsidian);
+  --sq-surface-1: #0B1220;
+  --sq-surface-2: var(--sq-graphite);
+  --sq-surface-3: #182033;
+  --sq-line: rgba(199, 210, 254, .10);
+  --sq-line-strong: rgba(199, 210, 254, .22);
+
+  /* Text on dark. Cobalt is a fill colour; on dark, accent TEXT uses ice. */
+  --sq-text: #E8ECF6;
+  --sq-text-muted: #94A3B8;
+
+  /* Accent fill + states (white text stays above 5:1 across the gradient) */
+  --sq-cobalt-press: #2548D6;
+  --sq-fill: linear-gradient(135deg, var(--sq-cobalt) 0%, var(--sq-cobalt-press) 100%);
   --sq-glow: 0 10px 40px -12px rgba(49, 94, 251, .65), 0 0 0 1px rgba(49, 94, 251, .28);
+
+  /* Spacing scale: 4 8 12 16 24 32 48 64 96 128 */
+  --sq-section: clamp(64px, 8vw, 128px);
+  --sq-gap: clamp(16px, 2vw, 30px);
+
+  /* Motion */
+  --sq-ease-out: cubic-bezier(.16, 1, .3, 1);
+  --sq-t-fast: 180ms;
+  --sq-t-med: 260ms;
 }
 
 /* 2) TYPOGRAPHY ------------------------------------------------
-   Manrope for display/headings, Inter for body. Icon fonts use their
-   own more-specific selectors, so inheritance here leaves them intact. */
-body {
+   Manrope for headings, Inter for everything read as body. The
+   template sets its own families on p, .h1–.h6 and form fields, so
+   both rules need !important. Icon fonts keep their own selector. */
+body, p, a, li, label, input, textarea, select, button,
+.sub-title, .ff-2, .text-caption, .nice-select, .nice-select span,
+.tf-btn-reply span, .services-item li span, .services-item-2 li span,
+.wg-download .text-wg, .form-comment .mess-comment {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+h1, h2, h3, h4, h5, h6,
+.h1, .h2, .h3, .h4, .h5, .h6, .title, .display {
+  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
+}
+/* Linked card titles (<a class="h3">, <h3><a>) stay in the heading face */
+:is(h1, h2, h3, h4, h5, h6, .title) a { font-family: inherit !important; }
+
+body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
-h1, h2, h3, h4, h5, h6,
-.title, .sub-title, .display, .ff-2, [class*="heading"] {
-  font-family: 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif !important;
-  letter-spacing: -0.012em;
+
+/* Display: the template floors h1 at 48px, which wraps to four lines on a
+   phone. Elements carrying an lh-* utility (marquee) keep their own leading. */
+h1:not([class*="lh-"]), .h1:not([class*="lh-"]) {
+  font-size: clamp(2.375rem, 1.5rem + 2.6vw, 3.75rem) !important;
+  line-height: 1.08 !important;
+}
+h1, .h1, h2, .h2 { letter-spacing: -0.03em; }
+h3, .h3, h4, .h4, h5, .h5, h6, .h6 { letter-spacing: -0.02em; }
+h1, h2, h3, .h1, .h2, .title { text-wrap: balance; }
+p { text-wrap: pretty; }
+.counter-item, .number, .plan-price { font-variant-numeric: tabular-nums; }
+
+/* Section titles are real <h2> and inner-page titles real <h1> now (they
+   were <p>). The template styled a few of them through `p` selectors and
+   through element-level h1 sizing, so restate those here. */
+.heading-section.style-white :is(h1, h2, h3) { color: var(--white); }
+.page-title .page-title-content h1.title-page {
+  font-size: clamp(42px, 6vw, 75px) !important;
+  line-height: clamp(48px, 6.5vw, 80px) !important;
+  letter-spacing: -0.04em;
 }
 
-/* 3) FINISHING TOUCHES ----------------------------------------- */
-
-/* Text selection + smooth scroll */
-::selection { background: rgba(49, 94, 251, .85); color: #fff; }
-html { scroll-behavior: smooth; }
-
-/* Branded scrollbar */
-*::-webkit-scrollbar { width: 10px; height: 10px; }
-*::-webkit-scrollbar-track { background: rgba(100, 116, 139, .10); }
-*::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #315EFB, #172554);
-  border-radius: 10px;
-  border: 2px solid transparent;
-  background-clip: padding-box;
+/* The hero word: same gradient idea, brand hues instead of template purple */
+.text-big-gradient {
+  background: linear-gradient(90deg, var(--sq-ice) 3%, #fff 47%, var(--sq-peri) 91%);
+  -webkit-background-clip: text;
+  background-clip: text;
 }
-*::-webkit-scrollbar-thumb:hover { background: #315EFB; }
 
-/* Buttons — subtle lift + cobalt glow */
-.tf-btn {
-  transition: box-shadow .35s ease, transform .35s ease, filter .35s ease;
+/* 3) SPACING & LAYOUT -------------------------------------------
+   One fluid section rhythm replaces the template's 130 → 80 → 60px steps
+   (which jumped 50px at 1439px). */
+.flat-spacing-1, .flat-spacing-2, .flat-spacing-5, .flat-spacing-7 {
+  padding-top: var(--sq-section);
+  padding-bottom: var(--sq-section);
 }
-.tf-btn:hover { transform: translateY(-2px); }
-.tf-btn.style-gradient:hover,
-.tf-btn.style-gradient-2:hover,
-.tf-btn.style-1:hover { box-shadow: var(--sq-glow); }
+.flat-spacing-3, .flat-spacing-6, .flat-spacing-8 {
+  padding-top: 0;
+  padding-bottom: var(--sq-section);
+}
+
+/* The marquees are wider than the viewport and nothing clipped them, so
+   the whole page scrolled sideways. clip (not hidden) keeps sticky working. */
+#wrapper { overflow-x: clip; }
+
+@media (max-width: 575px) {
+  .container {
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
+  }
+}
+
+/* 4) SURFACES --------------------------------------------------- */
+/* No pure black: dark sections sit on obsidian */
+.section-style-dark { background-color: var(--sq-obsidian) !important; }
+.footer.style-2 { background: var(--sq-obsidian); }
+
+/* Hero: pull the saturated photo toward obsidian so cobalt reads as light
+   coming through, not as a blue wall. Glow is kept behind the figure. */
+.wg-hero-area .image-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    /* cursor light (section 10); invisible until --sq-hero-glow rises */
+    radial-gradient(520px circle at var(--hx, 50%) var(--hy, 40%), rgba(49, 94, 251, calc(var(--sq-hero-glow) * .36)), transparent 70%),
+    radial-gradient(60% 75% at 58% 58%, rgba(8, 11, 20, 0) 0%, rgba(8, 11, 20, .58) 100%),
+    linear-gradient(180deg, rgba(8, 11, 20, .7) 0%, rgba(8, 11, 20, .2) 40%, rgba(8, 11, 20, .55) 100%);
+  transition: --sq-hero-glow .6s ease;
+}
+
+/* Below 1200px the hero copy sits on top of the centred figure; let the
+   figure recede so the headline and description stay readable */
+@media (max-width: 1199px) {
+  .wg-hero-area .image-hero { opacity: .38; }
+}
+
+/* Decorative PNG glows shipped in template purple: rotate them to cobalt */
+.section-services .image-shape:not(.image-shape-middle) img,
+.section-pricing .img-shape img,
+.footer.style-2 .image-shape img,
+.footer .image-bg img,
+.wg-download .image-bg img,
+.pricing-item.style-pro::after {
+  filter: hue-rotate(-28deg) saturate(1.15);
+}
+
+/* 5) COMPONENTS ------------------------------------------------- */
+
+/* Header — sticky state becomes a real glass bar over scrolling content */
+.header-fixed.header-sticky {
+  background-color: rgba(8, 11, 20, .78);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  backdrop-filter: blur(16px) saturate(140%);
+  box-shadow: 0 1px 0 var(--sq-line);
+}
+.header .menu-item .item-link { color: rgba(255, 255, 255, .8); }
+.header .menu-item .item-link:hover { color: #fff; }
+.menu-item .item-link::before { background-image: var(--sq-fill); }
+/* The header CTA is a full phrase now ("Request a Quote"): keep it on one
+   line, stop the logo shrinking, and take the room from link padding */
+.header .tf-btn .text-btn { white-space: nowrap; }
+.header .logo { flex: none; }
+@media (min-width: 1200px) {
+  .header.style-2 .menu-item .item-link { padding-left: 14px; padding-right: 14px; }
+  .header.style-2 > .container.w-975 { max-width: 1060px; }
+}
+
+/* 24×18 hamburger → 44px+ touch target without moving the bars */
+.mobile-button::after {
+  content: "";
+  position: absolute;
+  inset: -13px -10px;
+}
 
 /* Logo: consistent size + a soft shadow so the white wordmark stays
    legible over light translucent nav pills as well as dark surfaces */
@@ -77,25 +204,102 @@ html { scroll-behavior: smooth; }
 }
 @media (max-width: 575px) { .logo img { height: 28px; } }
 
-/* Accessible focus ring (keyboard users) */
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-textarea:focus-visible,
-select:focus-visible {
-  outline: 2px solid var(--sq-cobalt);
-  outline-offset: 2px;
-  border-radius: 6px;
+/* Buttons — solid cobalt, one clear state per interaction.
+   Rest: fill + top highlight · Hover: lift + glow, arrow nudges ·
+   Active: settles back, darker · Disabled: flat and inert */
+.tf-btn {
+  background: var(--sq-fill);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .24);
+  transition: translate var(--sq-t-fast) var(--sq-ease-out), box-shadow var(--sq-t-med) ease;
+}
+.tf-btn.style-gradient-2 {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .3), inset 0 -12px 18px -12px rgba(8, 11, 20, .45);
+}
+.tf-btn::before {
+  background-color: var(--sq-cobalt-press);
+  transition: width var(--sq-t-med) var(--sq-ease-out);
+}
+.tf-btn.style-color-black { background: var(--sq-graphite); }
+.tf-btn.style-color-black::before,
+.tf-btn.style-color-white::before,
+.tf-btn.style-color-white-2::before,
+.tf-btn.style-color-2::before { background: var(--sq-fill); }
+
+.tf-btn:hover .text-btn { transform: none; }
+.tf-btn:hover .icon-btn {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(4px);
+}
+.tf-btn:active { translate: var(--bx, 0px) var(--by, 0px); transition-duration: 80ms; }
+.tf-btn[disabled], .tf-btn[aria-disabled="true"], .tf-btn.disabled {
+  opacity: .45;
+  pointer-events: none;
+  box-shadow: none;
+}
+.tf-btn-arrow::before { background: var(--sq-fill); }
+
+/* Secondary pricing CTA on the dark glass card (no style-bg-* variant):
+   was a flat grey pill. Light card variants keep the template styling. */
+.pricing-item:not([class*="style-bg-"]) .tf-btn.style-color-2 {
+  background: rgba(255, 255, 255, .08);
+  box-shadow: inset 0 0 0 1px var(--sq-line-strong);
+}
+.pricing-item:not([class*="style-bg-"]) .tf-btn.style-color-2 .text-btn,
+.pricing-item:not([class*="style-bg-"]) .tf-btn.style-color-2 i { color: var(--sq-text); }
+
+/* Cards. Transitions name their properties: the template's `transition: all`
+   would smear GSAP's scroll reveals, which write transform/opacity per frame. */
+.box-services-icon, .pricing-item, .project-item, .team-card,
+.post-grid, .services-item, .services-item-2, .counter-item {
+  transition: translate var(--sq-t-med) var(--sq-ease-out),
+              box-shadow var(--sq-t-med) ease,
+              border-color var(--sq-t-med) ease,
+              background-color var(--sq-t-med) ease,
+              color var(--sq-t-med) ease,
+              filter var(--sq-t-med) ease;
+}
+.box-services-icon::before { background: linear-gradient(135deg, var(--sq-ice), var(--sq-cobalt)); }
+.pricing-item.style-pro {
+  box-shadow: 0 0 0 1px rgba(138, 180, 255, .3), 0 40px 80px -48px rgba(49, 94, 251, .8);
 }
 
-/* Gentle hover elevation for the main content cards */
-.box-service, .service-box, .box-pricing, .box-team, .box-blog,
-.widget-box, .box-card, .project-item {
-  transition: transform .4s cubic-bezier(.2,.7,.2,1), box-shadow .4s ease;
+/* Lifts only where a pointer can hover, and never inside a Swiper
+   (its overflow would clip the raised card) */
+@media (hover: hover) and (pointer: fine) {
+  .tf-btn:hover {
+    translate: var(--bx, 0px) calc(var(--by, 0px) - 2px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .24), var(--sq-glow);
+  }
+  .box-services-icon:hover {
+    translate: 0 -4px;
+    box-shadow: 0 24px 48px -28px rgba(49, 94, 251, .6);
+  }
+  :is(.pricing-item, .team-card, .post-grid, .services-item, .services-item-2, .project-item):not(.swiper-slide *):hover {
+    translate: 0 -6px;
+  }
+  .pricing-item:hover { box-shadow: 0 32px 64px -40px rgba(49, 94, 251, .7); }
+  .pricing-item.style-pro:hover {
+    box-shadow: 0 0 0 1px rgba(138, 180, 255, .5), 0 44px 88px -44px rgba(49, 94, 251, .95);
+  }
+  .project-item:hover { border-color: rgba(49, 94, 251, .35); }
 }
-.box-service:hover, .service-box:hover, .box-pricing:hover,
-.box-team:hover, .box-blog:hover, .project-item:hover {
-  transform: translateY(-6px);
+
+/* Contact form: one size for every field (16px also stops iOS zooming in
+   on focus), normal tracking, readable multi-line message */
+.form-contact input,
+.form-contact textarea,
+.form-contact .nice-select > span {
+  font-size: 16px !important;
+  letter-spacing: -0.01em;
+}
+.form-contact textarea { line-height: 1.5; }
+.form-contact textarea::placeholder { letter-spacing: 0; }
+
+/* Go-to-top sat underneath the chat launcher; stack it above instead */
+.progress-wrap {
+  right: 33px;
+  bottom: calc(98px + env(safe-area-inset-bottom));
 }
 
 /* Pricing is by proposal — hide the monthly/yearly toggle */
@@ -109,9 +313,157 @@ select:focus-visible {
    logos to show) so the site never implies clients it doesn't have */
 .brand-marque { display: none !important; }
 
-/* Respect reduced-motion preferences */
+/* 6) MOTION -----------------------------------------------------
+   JS lives in assets/js/synqentra-motion.js and gsapAnimation.js.
+   CSS owns the resting state, so nothing here hides content. */
+
+/* Masked heading reveal: the outer line clips, the inner line rises.
+   Padding keeps descenders (g, y, p) from being cut by the mask. */
+.sq-mask {
+  overflow: hidden;
+  padding-bottom: .14em;
+  margin-bottom: -.14em;
+}
+
+/* Clip reveals keep their shape; they just land with an expo ease */
+.tf-animate-1, .tf-animate-2, .tf-animate-3, .tf-animate-4 {
+  transition-duration: .9s;
+  transition-timing-function: var(--sq-ease-out);
+}
+/* …and photos settle from a slight over-scale as the clip opens */
+:is(.tf-animate-1, .tf-animate-2, .tf-animate-3, .tf-animate-4) > img {
+  scale: 1.12;
+  transition: scale 1.4s var(--sq-ease-out);
+}
+.active-animate > img { scale: 1; }
+
+/* Scroll-linked depth. JS tweens one number (--sq-p, 0 → 1) per section and
+   CSS decides what moves, using `translate` so it never fights transforms. */
+.wg-hero-area { --sq-p: 0; --px: 0; --py: 0; }
+.footer { --sq-p: 1; }
+@media (min-width: 992px) and (prefers-reduced-motion: no-preference) {
+  .wg-hero-area .top-hero-area {
+    translate: calc(var(--px) * -8px) calc(var(--sq-p) * -70px);
+    opacity: calc(1 - var(--sq-p) * .85);
+  }
+  .wg-hero-area .image-hero {
+    translate: calc(var(--px) * -16px) calc(var(--sq-p) * 56px + var(--py) * -8px);
+    transition: translate .5s var(--sq-ease-out);
+  }
+  .wg-hero-area .wg-quote-2 { translate: calc(var(--px) * 12px) calc(var(--sq-p) * -36px + var(--py) * 8px); }
+  .footer .big-text-footer {
+    translate: 0 calc((1 - var(--sq-p)) * 48px);
+    opacity: calc(.2 + var(--sq-p) * .8);
+  }
+}
+
+/* 7) FINISHING TOUCHES ------------------------------------------ */
+::selection { background: rgba(49, 94, 251, .85); color: #fff; }
+:root { accent-color: var(--sq-cobalt); }
+input, textarea { caret-color: var(--sq-cobalt); }
+
+/* Branded scrollbar (inner scroll areas; the template hides the page one) */
+*::-webkit-scrollbar { width: 10px; height: 10px; }
+*::-webkit-scrollbar-track { background: rgba(100, 116, 139, .10); }
+*::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #315EFB, #172554);
+  border-radius: 10px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover { background: #315EFB; }
+
+/* Focus ring: cobalt on light surfaces, ice where the surface is dark/blue */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--sq-cobalt);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+:is(.header, .wg-hero-area, .section-services, .section-pricing, .section-style-dark, .footer)
+  :is(a, button, input, textarea, select):focus-visible {
+  outline-color: var(--sq-ice);
+}
+
+/* 8) REDUCED MOTION ---------------------------------------------
+   The template has no handling of its own: reveal classes start hidden
+   and wait for JS, so they are forced visible here. */
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
-  .tf-btn, .box-service, .service-box, .box-pricing,
-  .box-team, .box-blog, .project-item { transition: none !important; }
+  .tf-animate-1, .tf-animate-2, .tf-animate-3, .tf-animate-4 {
+    clip-path: none !important;
+    opacity: 1 !important;
+    transition: none !important;
+  }
+  :is(.tf-animate-1, .tf-animate-2, .tf-animate-3, .tf-animate-4) > img { scale: 1; transition: none; }
+  .wow { visibility: visible !important; animation: none !important; }
+  .tf-btn, .tf-btn::before, .tf-btn .text-btn, .tf-btn .icon-btn,
+  .box-services-icon, .pricing-item, .project-item, .team-card,
+  .post-grid, .services-item, .services-item-2 { transition: none !important; }
+}
+
+/* 10) INTERACTION (mouse only) ------------------------------------
+   Driven by assets/js/synqentra-motion.js, which writes pointer position
+   into CSS variables. Touch devices and reduced-motion get none of it. */
+
+/* Dark cards carry a soft light that follows the cursor */
+.sq-spot {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .3s ease;
+  background: radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%), rgba(138, 180, 255, .17), transparent 65%);
+}
+:hover > .sq-spot { opacity: 1; }
+
+/* The hero is lit from wherever the cursor is. The light is a layer of the
+   hero overlay (section 4); registering the property lets it fade in. */
+@property --sq-hero-glow {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 0;
+}
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .wg-hero-area:hover .image-bg::after { --sq-hero-glow: 1; }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  /* Pointing at one service brings it forward: the others step back and
+     the centre mark lights up */
+  .section-services-inner:has(.box-services-icon:hover) .box-services-icon:not(:hover) {
+    filter: brightness(.62) saturate(.8);
+  }
+  .section-services-inner .logo-shape { transition: scale .4s var(--sq-ease-out), filter .4s ease; }
+  .section-services-inner:has(.box-services-icon:hover) .logo-shape {
+    scale: 1.07;
+    filter: drop-shadow(0 0 26px rgba(49, 94, 251, .75));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sq-spot { display: none; }
+}
+
+/* 11) HERO FOLD ---------------------------------------------------
+   The template left 129px under the headline, which put the primary
+   button at ~1010px: below the fold on a 900px-tall laptop. Tighten the
+   stack so the headline, description and button are visible on arrival;
+   short screens get a further step. */
+@media (min-width: 992px) {
+  .wg-hero-area .left-content .title { margin-bottom: 28px; }
+  .wg-hero-area .hero-area-content { padding-top: 40px; }
+  .wg-hero-area .top-hero-area .text-big-gradient { padding-top: 28px; padding-bottom: 28px; }
+}
+@media (min-width: 992px) and (max-height: 820px) {
+  .wg-hero-area .top-hero-area .text-big-gradient {
+    font-size: clamp(34px, 8vw, 112px);
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+  .wg-hero-area .hero-area-content { padding-top: 24px; padding-bottom: 40px; }
+  .wg-hero-area h1.title { font-size: 3.125rem !important; }
+  .wg-hero-area .image-hero { max-width: 330px; }
 }

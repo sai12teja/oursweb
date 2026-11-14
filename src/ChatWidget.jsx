@@ -53,12 +53,36 @@ export default function ChatWidget() {
   const [booking, setBooking] = useState(BLANK);
   const [bErr, setBErr] = useState({});
   const [bStatus, setBStatus] = useState("idle");
+  const [teaser, setTeaser] = useState(false);
   const bodyRef = useRef(null);
   const convId = useRef(getConversationId());
 
   useEffect(() => {
     if (bodyRef.current) bodyRef.current.scrollTop = bodyRef.current.scrollHeight;
   }, [messages, open, loading, showForm]);
+
+  // One nudge per browser session, a few seconds in. Never shown again once
+  // it has been dismissed or the chat has been opened.
+  useEffect(() => {
+    let seen = true;
+    try {
+      seen = !!sessionStorage.getItem("sq_chat_teaser");
+    } catch {
+      /* storage blocked: stay quiet */
+    }
+    if (seen) return;
+    const t = setTimeout(() => setTeaser(true), 9000);
+    return () => clearTimeout(t);
+  }, []);
+
+  function dismissTeaser() {
+    setTeaser(false);
+    try {
+      sessionStorage.setItem("sq_chat_teaser", "1");
+    } catch {
+      /* noop */
+    }
+  }
 
   function openBooking(note) {
     setMessages((m) => [
@@ -163,10 +187,10 @@ export default function ChatWidget() {
               onClick={() => (showForm ? setShowForm(false) : openBooking())}
               aria-label="Book appointment"
             >
-              {showForm ? "← Chat" : "📅 Book"}
+              {showForm ? "Back to chat" : "Book a call"}
             </button>
             <button className="ac-close" aria-label="Close chat" onClick={() => setOpen(false)}>
-              ×
+              <i className="icon-close" aria-hidden="true" />
             </button>
           </div>
 
@@ -207,7 +231,9 @@ export default function ChatWidget() {
                   placeholder="Ask about our services…"
                   aria-label="Message"
                 />
-                <button type="submit" disabled={loading || !input.trim()} aria-label="Send">➤</button>
+                <button type="submit" disabled={loading || !input.trim()} aria-label="Send">
+                  <i className="icon-send" aria-hidden="true" />
+                </button>
               </form>
             </>
           ) : (
@@ -248,12 +274,32 @@ export default function ChatWidget() {
         </div>
       )}
 
+      {teaser && !open && (
+        <div className="ac-teaser">
+          <button
+            className="ac-teaser__open"
+            onClick={() => {
+              setOpen(true);
+              dismissTeaser();
+            }}
+          >
+            Have a project in mind? Ask a question or book a call.
+          </button>
+          <button className="ac-teaser__close" aria-label="Dismiss" onClick={dismissTeaser}>
+            <i className="icon-close" aria-hidden="true" />
+          </button>
+        </div>
+      )}
+
       <button
         className="ac-launcher"
         aria-label={open ? "Close chat" : "Open chat"}
-        onClick={() => setOpen((o) => !o)}
+        onClick={() => {
+          setOpen((o) => !o);
+          dismissTeaser();
+        }}
       >
-        {open ? "×" : "💬"}
+        <i className={open ? "icon-close" : "icon-ai-chatbot"} aria-hidden="true" />
       </button>
     </div>
   );

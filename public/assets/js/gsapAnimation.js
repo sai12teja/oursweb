@@ -112,25 +112,6 @@
             });
         }
 
-        if ($('.title-animation').length > 0) {
-            $('.title-animation').each(function (index, splitTextLine) {
-                const tl = gsap.timeline({
-                    scrollTrigger: {
-                        trigger: splitTextLine,
-                        start: 'top 90%',
-                        end: 'bottom 60%',
-                        scrub: false,
-                        markers: false,
-                        toggleActions: 'play none none none'
-                    }
-                });
-                const itemSplitted = new SplitText(splitTextLine, { type: "words, lines" });
-                gsap.set(splitTextLine, { perspective: 200 });
-                itemSplitted.split({ type: "lines" });
-                tl.from(itemSplitted.lines, { duration: 1, delay: 0.2, opacity: 0, rotationX: -80, force3D: true, transformOrigin: "top center -50", stagger: 0.1 });
-            });
-        }
-
         if ($('.text-animation p').length > 0) {
             $('.text-animation p').each(function (index, splitTextLine) {
                 const tl = gsap.timeline({
@@ -168,6 +149,61 @@
                 });
             });
         }
+    };
+
+    // SYNQENTRA: headings rise line by line from behind a mask (.sq-mask in
+    // synqentra-brand.css). Small screens and wrappers that hold buttons or
+    // icons are never split; they fade up as one block. Hero items play as a
+    // single sequence on load, timed to land as the preloader clears.
+    var titleReveal = function () {
+        const els = gsap.utils.toArray(".title-animation");
+        if (!els.length) return;
+        if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+        gsap.registerPlugin(ScrollTrigger, SplitText);
+        const isMobile = window.innerWidth < 768;
+        let heroStep = 0;
+
+        els.forEach(function (el) {
+            // Hero items are the load sequence: they play unconditionally. Tying
+            // them to a scroll position left the button hidden until the first
+            // scroll whenever it sat in the bottom tenth of the screen.
+            const inHero = !!el.closest(".wg-hero-area");
+            const delay = inHero ? 0.45 + heroStep++ * 0.12 : 0;
+            const scrollTrigger = inHero ? undefined : { trigger: el, start: "top 90%", once: true };
+            const isText =
+                /^(H[1-6]|P)$/.test(el.tagName) &&
+                !el.querySelector("a, i, button, img");
+
+            if (isMobile || !isText) {
+                gsap.from(el, {
+                    scrollTrigger,
+                    y: isMobile ? 16 : 24,
+                    autoAlpha: 0,
+                    duration: 0.8,
+                    delay,
+                    ease: "power3.out",
+                    clearProps: "all",
+                });
+                return;
+            }
+
+            // Split twice: inner lines move, outer lines clip them.
+            const inner = new SplitText(el, { type: "lines", linesClass: "sq-line" });
+            const outer = new SplitText(el, { type: "lines", linesClass: "sq-mask" });
+            gsap.from(inner.lines, {
+                scrollTrigger,
+                yPercent: 115,
+                duration: 0.9,
+                delay,
+                ease: "power4.out",
+                stagger: 0.08,
+                // back to plain text so the heading re-wraps on resize
+                onComplete: function () {
+                    outer.revert();
+                    inner.revert();
+                },
+            });
+        });
     };
 
     var paralaxImage = () => {
@@ -305,59 +341,34 @@
         }
     };
 
+    // SYNQENTRA: one ScrollTrigger per reveal element. The template's
+    // IntersectionObserver never fired (the resting clip-path leaves these
+    // elements with no visible area), so it fell back to measuring layout on
+    // every scroll event. ScrollTrigger measures once per refresh and is torn
+    // down on route change by agentra-init.js.
     var animateImgItem = function () {
-        const isSmallScreen = window.matchMedia("(max-width: 767px)").matches;
-
-        const observer = new IntersectionObserver(
-            (entries) => {
-                entries.forEach((entry) => {
-                    if (entry.isIntersecting) {
-                        const delay =
-                            parseFloat(entry.target.getAttribute("data-delay")) || 0;
-                        setTimeout(() => {
-                            $(entry.target).addClass("active-animate");
+        gsap.registerPlugin(ScrollTrigger);
+        gsap.utils
+            .toArray(".tf-animate-1, .tf-animate-2, .tf-animate-3, .tf-animate-4")
+            .forEach(function (el) {
+                ScrollTrigger.create({
+                    trigger: el,
+                    start: "top 90%",
+                    once: true,
+                    onEnter: function () {
+                        const delay = parseFloat(el.getAttribute("data-delay")) || 0;
+                        setTimeout(function () {
+                            el.classList.add("active-animate");
                         }, delay * 1000);
-                    }
+                    },
                 });
-            },
-            {
-                threshold: isSmallScreen ? 0.1 : 0.1,
-            }
-        );
-
-        const elements = $(
-            ".tf-animate-1, .tf-animate-2, .tf-animate-3, .tf-animate-4"
-        );
-        elements.each(function () {
-            observer.observe(this);
-        });
-
-        const checkVisible = () => {
-            elements.each(function () {
-                const sectionOffsetTop = $(this).offset().top;
-                const sectionHeight = $(this).outerHeight();
-                const scrollPosition = $(window).scrollTop();
-                const windowHeight = $(window).height();
-
-                if (
-                    scrollPosition + windowHeight * 0.9 > sectionOffsetTop &&
-                    scrollPosition < sectionOffsetTop + sectionHeight
-                ) {
-                    const delay = parseFloat($(this).attr("data-delay")) || 0;
-                    setTimeout(() => {
-                        $(this).addClass("active-animate");
-                    }, delay * 1000);
-                }
             });
-        };
-
-        $(document).ready(checkVisible);
-        $(window).on("scroll", checkVisible);
     };
 
 
     $(function () {
         animationText();
+        titleReveal();
         paralaxImage();
         animateImgItem();
     });
