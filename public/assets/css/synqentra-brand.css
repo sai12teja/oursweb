@@ -506,3 +506,91 @@ select:focus-visible {
   .wg-hero-area h1.title { font-size: 3.125rem !important; }
   .wg-hero-area .image-hero { max-width: 330px; }
 }
+
+/* 12) DARK CANVAS -------------------------------------------------
+   Opt-in per page: <main id="wrapper" class="sq-dark">. It flips the
+   template's text and line tokens inside the page and re-seats the few
+   surfaces that were painted white. The mobile menu and go-to-top button
+   live outside #wrapper, so they are untouched. */
+#wrapper.sq-dark {
+  background-color: var(--sq-obsidian);
+  color: var(--sq-text);
+  --color-title: #F1F4FB;
+  --color-paragraph: var(--sq-text-muted);
+  --color-border-1: rgba(138, 180, 255, .16);
+  --color-border-2: rgba(199, 210, 254, .12);
+  --color-border-4: rgba(199, 210, 254, .16);
+  --color-border-7: var(--sq-line);
+  --color-border-8: rgba(199, 210, 254, .12);
+  --color-bg-1: rgba(49, 94, 251, .10);
+}
+
+/* Surfaces that were white become the first raised step */
+.sq-dark .process-accordion-item,
+.sq-dark .wg-fun-fact,
+.sq-dark .project-item {
+  background-color: var(--sq-surface-1);
+  border-color: var(--sq-line);
+  box-shadow: none;
+}
+/* Cards that were dark-on-white need an edge now that the page is dark too */
+.sq-dark .features-card { box-shadow: inset 0 0 0 1px var(--sq-line); }
+.sq-dark .project-item .meta-item {
+  background-color: rgba(8, 11, 20, .72);
+  color: var(--sq-text);
+}
+/* A graphite button disappears on obsidian: make it the quiet outline */
+.sq-dark .tf-btn.style-color-black {
+  background: rgba(255, 255, 255, .08);
+  box-shadow: inset 0 0 0 1px var(--sq-line-strong);
+}
+/* Islands that stay light keep dark text */
+.sq-dark .contact-card .link,
+.sq-dark .form-contact :is(input, textarea, select) { color: var(--sq-graphite); }
+/* Two template images were drawn for a white page. The ring graphic behind
+   the about photo becomes a faint halo, and the contact illustration loses
+   the soft white haze along its top edge. */
+.sq-dark img[src*="shape-se-about"] { opacity: .1; }
+.sq-dark img[src*="bg-section-contact"] {
+  opacity: .7;
+  -webkit-mask-image: linear-gradient(180deg, transparent 6%, #000 30%);
+  mask-image: linear-gradient(180deg, transparent 6%, #000 30%);
+}
+/* The frosted marquee strip was a white haze; on the dark canvas it is a
+   dark one. Below the desktop layout the contact illustration sits under
+   that strip and only adds noise, so it is dropped there. */
+.sq-dark .infiniteSlide-app.style-bg-blur { background: rgba(8, 11, 20, .55); }
+@media (max-width: 991px) {
+  .sq-dark img[src*="bg-section-contact"] { display: none; }
+}
+
+/* Inner pages on the dark canvas ---------------------------------- */
+/* Buttons that stay white or grey keep the light-theme text tokens */
+.sq-dark :is(.tf-btn.style-color-white, .tf-btn.style-color-white-2, .tf-btn.style-color-2) {
+  --color-title: #111827;
+  --color-paragraph: #566074;
+}
+/* White cards and rows become raised dark surfaces */
+.sq-dark .services-item-2,
+.sq-dark .pricing-item.style-bg-white:not(.style-pro) {
+  background: var(--sq-surface-2);
+  border-color: var(--sq-line);
+}
+.sq-dark .header-table { background-color: var(--sq-surface-3); }
+/* Secondary buttons inside pricing cards: one quiet outline, not white/grey */
+.sq-dark .pricing-item :is(.tf-btn.style-color-2, .tf-btn.style-color-white-2, .tf-btn.style-color-white) {
+  background: rgba(255, 255, 255, .08);
+  box-shadow: inset 0 0 0 1px var(--sq-line-strong);
+  --color-title: var(--sq-text);
+}
+/* Contact page: the frosted marquee strip was a pale slab on dark */
+.sq-dark .section-marquee.p-contact .infiniteSlide-app {
+  background: var(--sq-surface-1);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+/* Below 1200px the FAQ sidebar is a slide-in panel painted white */
+.sq-dark .sidebar-filter {
+  background-color: var(--sq-surface-1) !important; /* template uses !important */
+  border-color: var(--sq-line);
+}
