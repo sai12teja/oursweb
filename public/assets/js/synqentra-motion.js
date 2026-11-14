@@ -69,6 +69,32 @@
                 };
                 link(".wg-hero-area", "top top", "bottom top");
                 link(".footer", "top bottom", "bottom bottom");
+
+                // Each section's content rises into place as you scroll it in —
+                // motion tied to scroll position, not a one-off reveal. It starts
+                // 60px low and settles at 0 by the time the section is well in
+                // view, so it only ever moves up and never collides with a
+                // neighbour. Hero, footer and marquee strips keep their own motion.
+                gsap.utils.toArray("#wrapper section").forEach(function (sec) {
+                    if (sec.matches(".wg-hero-area, .section-marquee")) return;
+                    if (sec.querySelector(".infiniteSlide-app")) return; // marquee-bearing
+                    var content = sec.querySelector(":scope > .container");
+                    if (!content) return;
+                    // gsap.set holds the low start until the trigger runs, so the
+                    // content reliably begins 60px low and only ever rises.
+                    gsap.set(content, { y: 60 });
+                    gsap.to(content, {
+                        y: 0,
+                        ease: "none",
+                        scrollTrigger: {
+                            trigger: sec,
+                            start: "top bottom",
+                            end: "top 42%",
+                            scrub: 0.7,
+                            invalidateOnRefresh: true,
+                        },
+                    });
+                });
             }
         }
     );
