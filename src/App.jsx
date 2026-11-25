@@ -3,8 +3,10 @@ import { Routes, Route, useNavigate } from "react-router-dom";
 import { routes } from "./routes.js";
 import Page from "./Page.jsx";
 import ChatWidget from "./ChatWidget.jsx";
+import RouteTransition from "./RouteTransition.jsx";
 import { installLinkInterceptor } from "./agentra-init.js";
 import { installFormHandler } from "./forms.js";
+import { installUx } from "./ux.js";
 
 // Load every converted fragment as a raw string at build time.
 const fragments = import.meta.glob("./pages/html/*.html", {
@@ -22,6 +24,7 @@ export default function App() {
   const navigate = useNavigate();
   useEffect(() => installLinkInterceptor(navigate), [navigate]);
   useEffect(() => installFormHandler(), []);
+  useEffect(() => installUx(), []);
 
   return (
     <>
@@ -38,6 +41,7 @@ export default function App() {
           element={<Page html={htmlByName["404"]} title="404 — SYNQENTRA" />}
         />
       </Routes>
+      <RouteTransition />
       <ChatWidget />
     </>
   );

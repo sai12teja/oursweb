@@ -1,9 +1,13 @@
 // SYNQENTRA navbar behaviour. Re-run per route by src/agentra-init.js (after
 // main.js has cloned the mobile menu). Pairs with the NAVBAR block in
 // assets/css/synqentra-brand.css.
+//
+// The desktop active/hover highlight is pure CSS now (a cobalt underline), so
+// this file only owns two things: the thin scroll-progress line across the top
+// of the viewport, and the mobile sheet (adds a CTA + contact line, and closes
+// the offcanvas on navigation). The scrolled/frosted bar state is the
+// template's own `.header-sticky` toggle (assets/js/main.js).
 (function () {
-  var mqlDesktop = window.matchMedia("(min-width: 1200px)");
-
   // --- scroll-progress line (one element, kept across routes) ---
   var bar = document.querySelector(".sq-scrollbar");
   if (!bar) {
@@ -18,66 +22,14 @@
     bar.style.transform = "scaleX(" + (max > 0 ? el.scrollTop / max : 0) + ")";
   }
 
-  // --- gliding indicator under the desktop links ---
-  var nav = document.querySelector(".box-nav-menu");
-  var pill = null;
-  var links = [];
-  var current = null;
-  var navHovered = false;
-
-  function ensurePill() {
-    if (!nav || nav.offsetParent === null) return false; // hidden (hamburger)
-    if (!pill) {
-      pill = document.createElement("span");
-      pill.className = "sq-nav-pill";
-      pill.setAttribute("aria-hidden", "true");
-      nav.appendChild(pill);
-    }
-    links = [].slice.call(nav.querySelectorAll(".menu-item > .item-link"));
-    return links.length > 0;
-  }
-  function activeLink() {
-    return (nav && nav.querySelector(".item-link.active")) || links[0];
-  }
-  function move(el) {
-    if (!el || !pill) return;
-    var r = el.getBoundingClientRect();
-    if (!r.width) return;
-    pill.style.width = r.width + "px";
-    pill.style.transform =
-      "translate(" + (r.left - nav.getBoundingClientRect().left) + "px, -50%)";
-    pill.style.opacity = "1";
-    current = el;
-  }
-  function initNav() {
-    if (!mqlDesktop.matches || !ensurePill()) return;
-    current = activeLink();
-    requestAnimationFrame(function () { move(current); });
-    links.forEach(function (l) {
-      l.addEventListener("mouseenter", function () { move(l); });
-    });
-    nav.addEventListener("mouseenter", function () { navHovered = true; });
-    nav.addEventListener("mouseleave", function () {
-      navHovered = false;
-      move(activeLink());
-    });
-  }
-
-  // one throttled scroll handler: progress + keep the pill glued while the
-  // header condenses (which shifts the links)
   var ticking = false;
   function onScroll() {
     if (ticking) return;
     ticking = true;
     requestAnimationFrame(function () {
       progress();
-      if (pill && !navHovered) move(current || activeLink());
       ticking = false;
     });
-  }
-  function onResize() {
-    if (mqlDesktop.matches && ensurePill()) move(activeLink());
-    progress();
   }
 
   // --- mobile sheet: add a CTA + contact line, and close on navigate ---
@@ -111,19 +63,9 @@
     });
   }
 
-  // this file re-runs each route; drop the previous page's window handlers
+  // this file re-runs each route; drop the previous page's window handler
   if (window.__sqNavScroll) window.removeEventListener("scroll", window.__sqNavScroll);
-  if (window.__sqNavResize) window.removeEventListener("resize", window.__sqNavResize);
   window.__sqNavScroll = onScroll;
-  window.__sqNavResize = onResize;
   window.addEventListener("scroll", onScroll, { passive: true });
-  window.addEventListener("resize", onResize);
-
-  initNav();
   progress();
-  if (document.fonts && document.fonts.ready) {
-    document.fonts.ready.then(function () {
-      if (mqlDesktop.matches && ensurePill()) move(current || activeLink());
-    });
-  }
 })();

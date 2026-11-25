@@ -99,68 +99,8 @@
         }
     );
 
-    // Pointer-reactive light, mouse only: cursor position is written into CSS
-    // variables and synqentra-brand.css (section 10) decides what it does.
-    var SPOT = ".box-services-icon, .pricing-item, .features-card, .wg-quote-2, .form-contact";
-    var mouse = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-    var calm = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (mouse && !calm) {
-        // every route brings new cards: give each one its light layer
-        document.querySelectorAll(SPOT).forEach(function (card) {
-            if (card.querySelector(":scope > .sq-spot")) return;
-            if (getComputedStyle(card).position === "static") card.style.position = "relative";
-            var spot = document.createElement("span");
-            spot.className = "sq-spot";
-            spot.setAttribute("aria-hidden", "true");
-            card.appendChild(spot);
-        });
-
-        // one listener for the life of the app (this file re-runs per route)
-        if (!window.__sqPointer) {
-            window.__sqPointer = true;
-            var lastBtn = null;
-            var release = function () {
-                if (!lastBtn) return;
-                lastBtn.style.removeProperty("--bx");
-                lastBtn.style.removeProperty("--by");
-                lastBtn = null;
-            };
-            document.addEventListener(
-                "pointermove",
-                function (e) {
-                    var t = e.target;
-                    if (!t || !t.closest) return;
-
-                    var card = t.closest(SPOT);
-                    if (card) {
-                        var r = card.getBoundingClientRect();
-                        card.style.setProperty("--mx", e.clientX - r.left + "px");
-                        card.style.setProperty("--my", e.clientY - r.top + "px");
-                    }
-
-                    var hero = t.closest(".wg-hero-area");
-                    if (hero) {
-                        var h = hero.getBoundingClientRect();
-                        hero.style.setProperty("--hx", e.clientX - h.left + "px");
-                        hero.style.setProperty("--hy", e.clientY - h.top + "px");
-                        hero.style.setProperty("--px", (((e.clientX - h.left) / h.width) * 2 - 1).toFixed(3));
-                        hero.style.setProperty("--py", (((e.clientY - h.top) / h.height) * 2 - 1).toFixed(3));
-                    }
-
-                    // buttons lean a few pixels toward the cursor
-                    var btn = t.closest(".tf-btn");
-                    if (btn !== lastBtn) release();
-                    if (btn) {
-                        lastBtn = btn;
-                        var b = btn.getBoundingClientRect();
-                        btn.style.setProperty("--bx", ((e.clientX - b.left - b.width / 2) * 0.08).toFixed(1) + "px");
-                        btn.style.setProperty("--by", ((e.clientY - b.top - b.height / 2) * 0.2).toFixed(1) + "px");
-                    }
-                },
-                { passive: true }
-            );
-        }
-    }
+    // (Cursor-reactive light / tilt / magnetic buttons removed by request —
+    // the page now reacts only to hover and scroll.)
 
     // Webfonts shift layout after first paint; re-measure trigger positions.
     if (document.fonts && document.fonts.ready) {
