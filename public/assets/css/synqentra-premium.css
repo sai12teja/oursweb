@@ -1,0 +1,342 @@
+/* ============================================================
+   SYNQENTRA — Premium Elevation Layer
+   Loaded AFTER synqentra-brand.css. Additive and conservative:
+   it adds polish and reusable widgets, but owns NO layout that the
+   brand layer already controls (navbar, hero parallax, card hover
+   lift, section rhythm) — so there is one source of truth per
+   component and no competing rules.
+
+   0 Tokens · 1 Card consistency · 2 Hero CTAs · 3 FAQ accordion
+   4 Form controls · 5 Animated submit + validation · 6 Skeleton +
+   spinner · 7 Badges/chips/toasts · 8 Image polish · 9 Reduced motion
+   ============================================================ */
+
+/* 0) EXTENDED TOKENS -------------------------------------------- */
+:root {
+  --sq-r-xs: 8px;
+  --sq-r-sm: 12px;
+  --sq-r-md: 16px;
+  --sq-r-lg: 22px;
+  --sq-r-xl: 30px;
+  --sq-r-pill: 999px;
+
+  --sq-shadow-1: 0 2px 8px -4px rgba(8, 11, 20, .6);
+  --sq-shadow-2: 0 14px 34px -22px rgba(8, 11, 20, .9);
+  --sq-shadow-3: 0 26px 60px -30px rgba(8, 11, 20, .95), 0 0 0 1px var(--sq-line);
+
+  --sq-t-slow: 420ms;
+  --sq-ease-spring: cubic-bezier(.22, 1.2, .36, 1);
+  --sq-ease-in-out: cubic-bezier(.65, 0, .35, 1);
+}
+
+/* 1) CARD CONSISTENCY ------------------------------------------
+   One resting elevation so every card reads as a distinct object
+   on the dark canvas: a hairline edge + a soft drop shadow. The
+   brand layer already owns the 6px hover lift and the per-type
+   radius, so this only sets the resting border/shadow and never
+   touches width, padding or layout (that caused a collapse before).
+   Scoped away from Swiper (its overflow clips shadows) and from the
+   featured pricing card (which keeps its cobalt ring). */
+:is(.box-services-icon, .pricing-item, .project-item, .team-card,
+    .post-grid, .services-item, .services-item-2):not(.swiper-slide *):not(.style-pro) {
+  box-shadow: var(--sq-shadow-1);
+}
+
+/* 2) HERO CTAs -------------------------------------------------
+   The ghost secondary button that sits beside the solid primary in
+   the hero (and anywhere .tf-btn-ghost is used). Quiet at rest,
+   brightens and lifts on hover — a clear second action without
+   competing with the cobalt primary. */
+.tf-btn-ghost {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 54px;
+  box-sizing: border-box;
+  padding: 15px clamp(20px, 5vw, 28px);
+  border-radius: var(--sq-r-pill);
+  font: 600 15px/1 'Inter', -apple-system, 'Segoe UI', sans-serif;
+  letter-spacing: -.01em;
+  color: var(--sq-text);
+  background: rgba(255, 255, 255, .04);
+  box-shadow: inset 0 0 0 1px var(--sq-line-strong);
+  transition: background var(--sq-t-fast) ease, box-shadow var(--sq-t-fast) ease,
+    translate var(--sq-t-fast) var(--sq-ease-out), color var(--sq-t-fast) ease;
+}
+/* Phones: the hero's primary + ghost CTAs each take the full row so the tap
+   targets are comfortable and never crowd. Inline again from 576px up. */
+@media (max-width: 575px) {
+  .wg-hero-area .left-content .title-animation { width: 100%; }
+  .wg-hero-area .left-content .title-animation > .tf-btn,
+  .wg-hero-area .left-content .title-animation > .tf-btn-ghost { width: 100%; }
+}
+.tf-btn-ghost i { transition: transform var(--sq-t-fast) var(--sq-ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .tf-btn-ghost:hover {
+    translate: 0 -2px;
+    color: #fff;
+    background: rgba(49, 94, 251, .14);
+    box-shadow: inset 0 0 0 1px rgba(138, 180, 255, .45);
+  }
+  .tf-btn-ghost:hover i { transform: translateX(3px); }
+}
+.tf-btn-ghost:active { translate: 0; }
+
+/* 3) FAQ ACCORDION POLISH --------------------------------------
+   The template already morphs + into – . Add a quarter-turn on open
+   and a clear active state on the open item. */
+.according-item .title-according .icon {
+  transition: transform var(--sq-t-med) var(--sq-ease-spring);
+}
+.according-item .title-according:not(.collapsed) .icon { transform: rotate(90deg); }
+.according-item.style-2 {
+  transition: border-color var(--sq-t-med) ease, background-color var(--sq-t-med) ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .according-item.style-2:hover { border-color: var(--sq-line-strong); }
+}
+.according-item.style-2:has(.title-according:not(.collapsed)) {
+  border-color: rgba(138, 180, 255, .4);
+  background-color: rgba(49, 94, 251, .1);
+}
+
+/* 4) FORM CONTROLS (opt-in via class) --------------------------- */
+.sq-check,
+.sq-radio {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 22px;
+  height: 22px;
+  flex: none;
+  display: inline-grid;
+  place-content: center;
+  border: 1.5px solid var(--sq-line-strong);
+  background: rgba(255, 255, 255, .04);
+  cursor: pointer;
+  transition: border-color var(--sq-t-fast) ease, background var(--sq-t-fast) ease, box-shadow var(--sq-t-fast) ease;
+}
+.sq-check { border-radius: 7px; }
+.sq-radio { border-radius: 50%; }
+.sq-check::before {
+  content: "";
+  width: 11px;
+  height: 11px;
+  transform: scale(0);
+  transition: transform var(--sq-t-fast) var(--sq-ease-spring);
+  clip-path: polygon(14% 44%, 0 65%, 41% 100%, 100% 16%, 83% 2%, 38% 70%);
+  background: #fff;
+}
+.sq-radio::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fff;
+  transform: scale(0);
+  transition: transform var(--sq-t-fast) var(--sq-ease-spring);
+}
+.sq-check:checked,
+.sq-radio:checked { background: var(--sq-fill); border-color: transparent; }
+.sq-check:checked::before,
+.sq-radio:checked::before { transform: scale(1); }
+.sq-check:focus-visible,
+.sq-radio:focus-visible { box-shadow: 0 0 0 4px rgba(49, 94, 251, .3); outline: none; }
+
+.sq-switch {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 46px;
+  height: 26px;
+  flex: none;
+  border-radius: var(--sq-r-pill);
+  background: rgba(255, 255, 255, .12);
+  box-shadow: inset 0 0 0 1px var(--sq-line-strong);
+  position: relative;
+  cursor: pointer;
+  transition: background var(--sq-t-med) var(--sq-ease-out);
+}
+.sq-switch::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: var(--sq-shadow-1);
+  transition: transform var(--sq-t-med) var(--sq-ease-spring);
+}
+.sq-switch:checked { background: var(--sq-fill); box-shadow: none; }
+.sq-switch:checked::after { transform: translateX(20px); }
+.sq-switch:focus-visible { box-shadow: 0 0 0 4px rgba(49, 94, 251, .3); outline: none; }
+
+/* 5) ANIMATED SUBMIT + INLINE VALIDATION -----------------------
+   Driven by src/forms.js, which toggles .is-loading / .is-success on
+   the submit button and .sq-invalid on rejected fields.
+   .tf-btn::after is unused by the template, so it carries both. */
+.tf-btn.is-loading,
+.tf-btn.is-success,
+.send-btn.is-loading,
+.send-btn.is-success { position: relative; pointer-events: none; }
+.tf-btn.is-loading .text-btn,
+.tf-btn.is-loading .icon-btn,
+.tf-btn.is-success .text-btn,
+.tf-btn.is-success .icon-btn,
+.send-btn.is-loading i,
+.send-btn.is-success i { opacity: 0; }
+.tf-btn.is-loading::after,
+.send-btn.is-loading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 20px;
+  height: 20px;
+  margin: -10px 0 0 -10px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, transparent 12%, #fff);
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 0);
+  animation: sqSpin .8s linear infinite;
+}
+.tf-btn.is-success::after,
+.send-btn.is-success::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 22px;
+  height: 22px;
+  margin: -11px 0 0 -11px;
+  background: no-repeat center / 20px url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='22' height='22' fill='none' stroke='%23fff' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 11.5l5 5 9-11'/%3E%3C/svg%3E");
+  animation: sqCheckPop .34s var(--sq-ease-spring) both;
+}
+@keyframes sqSpin { to { transform: rotate(1turn); } }
+@keyframes sqCheckPop { from { opacity: 0; transform: scale(.4); } to { opacity: 1; transform: none; } }
+
+.sq-invalid,
+.form-contact .sq-invalid {
+  border-color: #f87171 !important;
+  box-shadow: 0 0 0 4px rgba(248, 113, 113, .22) !important;
+  animation: sqShake .36s var(--sq-ease-in-out) both;
+}
+@keyframes sqShake {
+  10%, 90% { transform: translateX(-1px); }
+  30%, 70% { transform: translateX(2px); }
+  50% { transform: translateX(-3px); }
+}
+
+/* 6) SKELETON + BRANDED SPINNER (utilities) --------------------- */
+.sq-skeleton {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--sq-r-sm);
+  background: rgba(199, 210, 254, .08);
+}
+.sq-skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, transparent, rgba(199, 210, 254, .16), transparent);
+  animation: sqShimmer 1.4s ease-in-out infinite;
+}
+@keyframes sqShimmer { to { transform: translateX(100%); } }
+.sq-spinner {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: inline-block;
+  background: conic-gradient(from 0deg, transparent 15%, var(--sq-cobalt));
+  -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 0);
+  mask: radial-gradient(farthest-side, transparent calc(100% - 4px), #000 0);
+  animation: sqSpin .9s linear infinite;
+}
+
+/* 7) BADGES / CHIPS / TOASTS -----------------------------------*/
+.sq-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border-radius: var(--sq-r-pill);
+  font: 600 12px/1 'Inter', sans-serif;
+  color: var(--sq-ice);
+  background: rgba(49, 94, 251, .14);
+  box-shadow: inset 0 0 0 1px rgba(138, 180, 255, .3);
+}
+.sq-badge.is-solid { color: #fff; background: var(--sq-fill); box-shadow: none; }
+.sq-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 14px;
+  border-radius: var(--sq-r-pill);
+  font: 500 13px/1 'Inter', sans-serif;
+  color: var(--sq-text);
+  background: rgba(255, 255, 255, .05);
+  box-shadow: inset 0 0 0 1px var(--sq-line);
+  transition: border-color var(--sq-t-fast) ease, background var(--sq-t-fast) ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  .sq-chip:hover { background: rgba(49, 94, 251, .12); box-shadow: inset 0 0 0 1px rgba(138, 180, 255, .35); }
+}
+.sq-toast-region {
+  position: fixed;
+  z-index: 100001;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: calc(18px + env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+  max-width: min(360px, calc(100vw - 36px));
+}
+.sq-toast {
+  pointer-events: auto;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 13px 15px;
+  border-radius: var(--sq-r-md);
+  background: rgba(11, 18, 32, .94);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  backdrop-filter: blur(14px) saturate(140%);
+  color: var(--sq-text);
+  font: 500 14px/1.45 'Inter', sans-serif;
+  box-shadow: var(--sq-shadow-3);
+  border-left: 3px solid var(--sq-cobalt);
+  animation: sqToastIn .4s var(--sq-ease-spring) both;
+}
+.sq-toast.is-success { border-left-color: #4ade80; }
+.sq-toast.is-error { border-left-color: #f87171; }
+.sq-toast.is-leaving { animation: sqToastOut .3s var(--sq-ease-in-out) both; }
+@keyframes sqToastIn { from { opacity: 0; transform: translateX(16px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes sqToastOut { to { opacity: 0; transform: translateX(16px) scale(.98); } }
+
+/* 8) IMAGE POLISH ----------------------------------------------*/
+.project-item img,
+.post-grid .image img,
+.team-card img {
+  transition: transform var(--sq-t-slow) var(--sq-ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .project-item:hover img,
+  .post-grid:hover .image img { transform: scale(1.06); }
+}
+.progress-wrap { box-shadow: var(--sq-shadow-2); border-radius: 50%; }
+
+/* 9) REDUCED MOTION -------------------------------------------*/
+@media (prefers-reduced-motion: reduce) {
+  .sq-skeleton::after,
+  .sq-spinner,
+  .tf-btn.is-loading::after,
+  .send-btn.is-loading::after { animation: none; }
+  .tf-btn.is-success::after,
+  .send-btn.is-success::after,
+  .sq-invalid,
+  .sq-toast { animation: none; }
+  .project-item img, .post-grid .image img, .team-card img { transition: none; }
+}

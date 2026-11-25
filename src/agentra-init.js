@@ -9,6 +9,7 @@ const INIT_SCRIPTS = [
   "/assets/js/main.js",         // header sticky, counters, accordions, go-top, …
   "/assets/js/synqentra-motion.js", // card reveals + scroll-linked depth (brand layer)
   "/assets/js/synqentra-nav.js",    // navbar: sliding indicator, condense, mobile sheet
+  "/assets/js/synqentra-ui.js",     // popover tooltips, native reveals, toasts (brand layer)
 ];
 
 function loadScript(src) {

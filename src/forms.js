@@ -66,7 +66,13 @@ export function installFormHandler() {
 
     const button = form.querySelector('[type="submit"]');
     form.dataset.sending = "1";
-    if (button) button.disabled = true;
+    // clear any prior inline field errors
+    form.querySelectorAll(".sq-invalid").forEach((f) => f.classList.remove("sq-invalid"));
+    if (button) {
+      button.disabled = true;
+      button.classList.remove("is-success");
+      button.classList.add("is-loading");
+    }
     say(form, "Sending…");
 
     try {
@@ -77,23 +83,45 @@ export function installFormHandler() {
       });
       const data = await res.json();
       if (data.ok) {
+        const msg = isNewsletter
+          ? "Thanks — you're on the list."
+          : "Thanks — your message is in. We'll reply by email with clear next steps.";
         form.reset();
-        say(
-          form,
-          isNewsletter
-            ? "Thanks — you're on the list."
-            : "Thanks — your message is in. We'll reply by email with clear next steps."
-        );
+        say(form, msg);
+        if (button) {
+          button.classList.remove("is-loading");
+          button.classList.add("is-success");
+          setTimeout(() => button.classList.remove("is-success"), 1900);
+        }
+        if (typeof window.sqToast === "function") window.sqToast(msg, { type: "success" });
       } else if (data.errors) {
-        say(form, Object.values(data.errors)[0], true);
+        // mark each rejected field inline; clear on next keystroke
+        Object.keys(data.errors).forEach((key) => {
+          const field = form.querySelector('[name="' + key + '"]');
+          if (!field) return;
+          field.classList.add("sq-invalid");
+          field.addEventListener(
+            "input",
+            () => field.classList.remove("sq-invalid"),
+            { once: true }
+          );
+        });
+        const first = Object.values(data.errors)[0];
+        say(form, first, true);
+        if (typeof window.sqToast === "function") window.sqToast(first, { type: "error" });
       } else {
         say(form, FALLBACK, true);
+        if (typeof window.sqToast === "function") window.sqToast(FALLBACK, { type: "error" });
       }
     } catch {
       say(form, FALLBACK, true);
+      if (typeof window.sqToast === "function") window.sqToast(FALLBACK, { type: "error" });
     } finally {
       delete form.dataset.sending;
-      if (button) button.disabled = false;
+      if (button) {
+        button.disabled = false;
+        button.classList.remove("is-loading");
+      }
     }
   };
 
